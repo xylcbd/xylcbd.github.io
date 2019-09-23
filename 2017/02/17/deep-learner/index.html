@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="深度学习,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="竹杖芒鞋轻胜马，一蓑烟雨任平生" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="深度学习，自2012年以来，一年比一年火。相比80年代的人工智能热，这一次，基于深度学习的各种智能服务确实带来了可见的惊喜。深度学习在图像领域的各层面都取得了骄人的成绩，包括分割、识别等高级任务，以及去噪、二值化、超分辨率等低级任务。在语音以及自然语言处理等方面也在快速发展。   介绍一下我所认为的深度学习技术栈。   数据收集与扩充数据是深度学习成功的重要因素，并且随着各种深度学习框架的普及，数">
+<meta name="keywords" content="深度学习">
+<meta property="og:type" content="article">
+<meta property="og:title" content="我所理解的深度学习技术栈">
+<meta property="og:url" content="http://hongbomin.com/2017/02/17/deep-learner/index.html">
+<meta property="og:site_name" content="竹杖芒鞋轻胜马，一蓑烟雨任平生">
+<meta property="og:description" content="深度学习，自2012年以来，一年比一年火。相比80年代的人工智能热，这一次，基于深度学习的各种智能服务确实带来了可见的惊喜。深度学习在图像领域的各层面都取得了骄人的成绩，包括分割、识别等高级任务，以及去噪、二值化、超分辨率等低级任务。在语音以及自然语言处理等方面也在快速发展。   介绍一下我所认为的深度学习技术栈。   数据收集与扩充数据是深度学习成功的重要因素，并且随着各种深度学习框架的普及，数">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-09-23T07:01:34.166Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="我所理解的深度学习技术栈">
+<meta name="twitter:description" content="深度学习，自2012年以来，一年比一年火。相比80年代的人工智能热，这一次，基于深度学习的各种智能服务确实带来了可见的惊喜。深度学习在图像领域的各层面都取得了骄人的成绩，包括分割、识别等高级任务，以及去噪、二值化、超分辨率等低级任务。在语音以及自然语言处理等方面也在快速发展。   介绍一下我所认为的深度学习技术栈。   数据收集与扩充数据是深度学习成功的重要因素，并且随着各种深度学习框架的普及，数">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://hongbomin.com/2017/02/17/deep-learner/">
+
+
+
+
+
+  <title>我所理解的深度学习技术栈 | 竹杖芒鞋轻胜马，一蓑烟雨任平生</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?23a58b060800f89fe2c9907f73bc0fdf";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">竹杖芒鞋轻胜马，一蓑烟雨任平生</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">don't worry,be happy.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://hongbomin.com/2017/02/17/deep-learner/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="洪柏敏">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="竹杖芒鞋轻胜马，一蓑烟雨任平生">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">我所理解的深度学习技术栈</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-02-17T21:19:03+08:00">
+                2017-02-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/深度学习/" itemprop="url" rel="index">
+                    <span itemprop="name">深度学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/02/17/deep-learner/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count gitment-comments-count" data-xid="/2017/02/17/deep-learner/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2017/02/17/deep-learner/" class="leancloud_visitors" data-flag-title="我所理解的深度学习技术栈">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>深度学习，自2012年以来，一年比一年火。相比80年代的人工智能热，这一次，基于深度学习的各种智能服务确实带来了可见的惊喜。<br>深度学习在图像领域的各层面都取得了骄人的成绩，包括分割、识别等高级任务，以及去噪、二值化、超分辨率等低级任务。<br>在语音以及自然语言处理等方面也在快速发展。  </p>
+<p>介绍一下我所认为的深度学习技术栈。  </p>
+<h3 id="数据收集与扩充"><a href="#数据收集与扩充" class="headerlink" title="数据收集与扩充"></a>数据收集与扩充</h3><p>数据是深度学习成功的重要因素，并且随着各种深度学习框架的普及，数据越来越成为最重要的门槛。<br>数据一般有2种来源，其一是来自于业务场景的真实数据（包括人工标注的数据），其二是模拟真实场景仿造的数据。<br>真实数据昂贵不易获得，很多时候就需要产生大量的模拟数据以满足深度学习的要求。模拟数据因尽可能的接近真实数据的分布情况。<br>在图像领域，产生模拟数据的手段包括但不限于如下技术：</p>
+<ul>
+<li>旋转</li>
+<li>剪切</li>
+<li>翻转</li>
+<li>缩放</li>
+<li>加噪声</li>
+<li>有损压缩（JPEG、Mpeg等）</li>
+<li>水印</li>
+</ul>
+<h3 id="基础深度学习模型"><a href="#基础深度学习模型" class="headerlink" title="基础深度学习模型"></a>基础深度学习模型</h3><p>应该理解并能编程实现基础的深度学习模型（可参考：<a href="https://github.com/xylcbd/EasyCNN" target="_blank" rel="noopener">EasyCNN</a>,<a href="https://github.com/xylcbd/EasyTF" target="_blank" rel="noopener">EasyTF</a>），包括如下基础模型：</p>
+<ul>
+<li>MLP</li>
+<li>CNN</li>
+<li>LSTM</li>
+</ul>
+<h3 id="高级深度学习模型"><a href="#高级深度学习模型" class="headerlink" title="高级深度学习模型"></a>高级深度学习模型</h3><p>需要理解高级深度学习模型，并能够通过通用框架（如TensorFlow、Keras等）实现之。</p>
+<ul>
+<li>AlexNet</li>
+<li>VGG</li>
+<li>GoogleNet (Inception v1-v4, Xception)</li>
+<li>ResNet</li>
+<li>Network-in-network</li>
+<li>SqueezeNet</li>
+<li>E-Net</li>
+<li>R-CNN、SSD、YOLO</li>
+<li>Stack RNN/LSTM/GRU</li>
+<li>Seq2Seq</li>
+<li>CRNN</li>
+</ul>
+<h3 id="各种trick"><a href="#各种trick" class="headerlink" title="各种trick"></a>各种trick</h3><p>在训练深度学习模型的时候，有时候各种trick能起到很好的效果。应该了解其大致作用和原理。</p>
+<ul>
+<li>Dropout</li>
+<li>Batch Normalization</li>
+<li>Local Response Normalization</li>
+<li>L1/L2正则化</li>
+</ul>
+<h3 id="各种Operator"><a href="#各种Operator" class="headerlink" title="各种Operator"></a>各种Operator</h3><p>在现代深度学习框架中，普遍都有Operator这样的抽象概念，需要了解一些重要的OP的原理和推导。</p>
+<ul>
+<li>Conv</li>
+<li>Pool</li>
+<li>RNN/LSTM</li>
+<li>Element-wise op</li>
+<li>Softmax</li>
+<li>CTC</li>
+</ul>
+<h3 id="参数初始化"><a href="#参数初始化" class="headerlink" title="参数初始化"></a>参数初始化</h3><p>参数初始化，了解其作用即可。</p>
+<ul>
+<li>xavier</li>
+<li>constant</li>
+<li>gaussian</li>
+<li>uniform</li>
+<li>bilinear</li>
+</ul>
+<h3 id="激活函数"><a href="#激活函数" class="headerlink" title="激活函数"></a>激活函数</h3><p>激活函数，了解其作用即可。</p>
+<ul>
+<li>Sigmoid</li>
+<li>Tanh</li>
+<li>RELU</li>
+<li>Leaky ReLU</li>
+<li>ELU</li>
+<li>Maxout</li>
+</ul>
+<h3 id="损失函数"><a href="#损失函数" class="headerlink" title="损失函数"></a>损失函数</h3><p>不同的任务选用不同的损失函数。</p>
+<ul>
+<li>Absolute loss</li>
+<li>Square loss</li>
+<li>Log loss</li>
+<li>Cross-Entroy loss</li>
+<li>Zeor-one loss</li>
+<li>Hinge loss</li>
+<li>Perceptron loss</li>
+<li>Exponential loss</li>
+<li>CTC loss</li>
+</ul>
+<h3 id="优化方法"><a href="#优化方法" class="headerlink" title="优化方法"></a>优化方法</h3><p>优化方法影响模型精度和模型收敛速度，一般选择SGD+Momentum。</p>
+<ul>
+<li>SGD</li>
+<li>Momentum</li>
+<li>Nesterov</li>
+<li>Adagrad</li>
+<li>Adadelta</li>
+<li>RMSprop</li>
+<li>Adam</li>
+<li>Adamax</li>
+<li>Nadam</li>
+</ul>
+<h3 id="框架实现"><a href="#框架实现" class="headerlink" title="框架实现"></a>框架实现</h3><p>框架用多了，自然就了解框架的大概模块和原理了。也可以尝试自己实现一遍框架，这时候不只是考量深度学习基本知识，还考验工程架构能力。</p>
+<ul>
+<li>框架设计</li>
+<li>计算图与其优化</li>
+<li>数据并行与模型并行</li>
+<li>分布式</li>
+</ul>
+<h3 id="理论与实际"><a href="#理论与实际" class="headerlink" title="理论与实际"></a>理论与实际</h3><p>深度学习发展非常快，隔不了几个月就有新概念，一般关注一下相关的新闻和最新的论文即可。一些实际问题在踩坑和交流的过程中会有答案。</p>
+<ul>
+<li>Zero-center</li>
+<li>梯度消失</li>
+<li>梯度爆炸</li>
+<li>如何调参</li>
+<li>Finetune</li>
+<li>增强学习</li>
+<li>模型压缩</li>
+<li>速度优化（low bit）</li>
+</ul>
+<h3 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h3><p>各种深度学习的应用，“没有做不到，只有想不到”。</p>
+<ul>
+<li>OCR</li>
+<li>语音识别</li>
+<li>自然语言处理</li>
+<li>风格转移</li>
+<li>人脸定位 &amp; 人脸识别</li>
+<li>手势识别</li>
+<li>物体追踪</li>
+<li>图像检索</li>
+<li>超分辨率重建</li>
+<li>去噪&amp;去马赛克</li>
+</ul>
+<p>个人推崇带着问题去学习，在实际项目中学习。因此这里大部分只是关键字，并不尝试去解释每个词的意思。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+      <div>
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/about/qrcode.jpg" alt="洪柏敏 wechat" style="width: 200px; max-width: 100%;">
+    <div>欢迎留言评论，邮件给我(dahanhbm AT gmail DOT com)，或者关注我的微信公众号</div>
+</div>
+
+      </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/深度学习/" rel="tag"># 深度学习</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/02/13/the-2017-plan/" rel="next" title="2017年度计划">
+                <i class="fa fa-chevron-left"></i> 2017年度计划
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/02/17/paper-reading-INQ/" rel="prev" title="论文阅读：Incremental Network Quantization">
+                论文阅读：Incremental Network Quantization <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      
+        <div id="gitment-container"></div>
+      
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">洪柏敏</p>
+              <p class="site-description motion-element" itemprop="description">个人网站，学习思考总结</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">46</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">25</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">70</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/xylcbd" target="_blank" title="GitHub">
+                    
+                      <i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/xing-ye-luo-chen" target="_blank" title="ZhiHu">
+                    
+                      <i class="fa fa-fw fa-zhihu"></i>ZhiHu</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:dahanhbm@gmail.com" target="_blank" title="E-Mail">
+                    
+                      <i class="fa fa-fw fa-gmail"></i>E-Mail</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据收集与扩充"><span class="nav-number">1.</span> <span class="nav-text">数据收集与扩充</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基础深度学习模型"><span class="nav-number">2.</span> <span class="nav-text">基础深度学习模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#高级深度学习模型"><span class="nav-number">3.</span> <span class="nav-text">高级深度学习模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#各种trick"><span class="nav-number">4.</span> <span class="nav-text">各种trick</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#各种Operator"><span class="nav-number">5.</span> <span class="nav-text">各种Operator</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参数初始化"><span class="nav-number">6.</span> <span class="nav-text">参数初始化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#激活函数"><span class="nav-number">7.</span> <span class="nav-text">激活函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#损失函数"><span class="nav-number">8.</span> <span class="nav-text">损失函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#优化方法"><span class="nav-number">9.</span> <span class="nav-text">优化方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#框架实现"><span class="nav-number">10.</span> <span class="nav-text">框架实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#理论与实际"><span class="nav-number">11.</span> <span class="nav-text">理论与实际</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#应用"><span class="nav-number">12.</span> <span class="nav-text">应用</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">洪柏敏</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+<!-- LOCAL: You can save these files to your site and update links -->
+    
+        
+        <link rel="stylesheet" href="https://aimingoo.github.io/gitmint/style/default.css">
+        <script src="https://aimingoo.github.io/gitmint/dist/gitmint.browser.js"></script>
+    
+<!-- END LOCAL -->
+
+    
+
+    
+      <script type="text/javascript">
+      function renderGitment(){
+        var gitment = new Gitmint({
+            id: window.location.pathname, 
+            owner: 'xylcbd',
+            repo: 'gitment-comments',
+            
+            lang: "" || navigator.language || navigator.systemLanguage || navigator.userLanguage,
+            
+            oauth: {
+            
+            
+                client_secret: '6206a9e33b41c30b642d93033256b456fd1d528a',
+            
+                client_id: '524a666634fb71b2f83a'
+            }});
+        gitment.render('gitment-container');
+      }
+
+      
+      renderGitment();
+      
+      </script>
+    
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("a36Qsdl9bxSSSq9Vt28ngRkk-gzGzoHsz", "gBUBOqu5qkDbk84fVTUUNdpS");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

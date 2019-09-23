@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="TensorFlow,gpu,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="竹杖芒鞋轻胜马，一蓑烟雨任平生" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="概述TensorFlow作为深度学习时代的“C语言”，值得好好学习一下。本文介绍TensorFlow的单机多卡数据并行加速，以mnist为例进行说明。 CNN模型一个简单的识别mnist数据集的CNN模型，非常简单，如下：1234567891011121314151617181920212223242526272829303132333435363738394041424344def get_we">
+<meta name="keywords" content="TensorFlow,gpu">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TensorFlow多GPU并行">
+<meta property="og:url" content="http://hongbomin.com/2017/06/27/tensorflow-mnist-multi-gpu/index.html">
+<meta property="og:site_name" content="竹杖芒鞋轻胜马，一蓑烟雨任平生">
+<meta property="og:description" content="概述TensorFlow作为深度学习时代的“C语言”，值得好好学习一下。本文介绍TensorFlow的单机多卡数据并行加速，以mnist为例进行说明。 CNN模型一个简单的识别mnist数据集的CNN模型，非常简单，如下：1234567891011121314151617181920212223242526272829303132333435363738394041424344def get_we">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-09-23T07:01:34.219Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="TensorFlow多GPU并行">
+<meta name="twitter:description" content="概述TensorFlow作为深度学习时代的“C语言”，值得好好学习一下。本文介绍TensorFlow的单机多卡数据并行加速，以mnist为例进行说明。 CNN模型一个简单的识别mnist数据集的CNN模型，非常简单，如下：1234567891011121314151617181920212223242526272829303132333435363738394041424344def get_we">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://hongbomin.com/2017/06/27/tensorflow-mnist-multi-gpu/">
+
+
+
+
+
+  <title>TensorFlow多GPU并行 | 竹杖芒鞋轻胜马，一蓑烟雨任平生</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?23a58b060800f89fe2c9907f73bc0fdf";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">竹杖芒鞋轻胜马，一蓑烟雨任平生</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">don't worry,be happy.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://hongbomin.com/2017/06/27/tensorflow-mnist-multi-gpu/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="洪柏敏">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="竹杖芒鞋轻胜马，一蓑烟雨任平生">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">TensorFlow多GPU并行</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-27T21:09:00+08:00">
+                2017-06-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/TensorFlow/" itemprop="url" rel="index">
+                    <span itemprop="name">TensorFlow</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/06/27/tensorflow-mnist-multi-gpu/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count gitment-comments-count" data-xid="/2017/06/27/tensorflow-mnist-multi-gpu/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2017/06/27/tensorflow-mnist-multi-gpu/" class="leancloud_visitors" data-flag-title="TensorFlow多GPU并行">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>TensorFlow作为深度学习时代的“C语言”，值得好好学习一下。本文介绍TensorFlow的单机多卡数据并行加速，以mnist为例进行说明。</p>
+<h2 id="CNN模型"><a href="#CNN模型" class="headerlink" title="CNN模型"></a>CNN模型</h2><p>一个简单的识别mnist数据集的CNN模型，非常简单，如下：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_weight_varible</span><span class="params">(name,shape)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> tf.get_variable(name, shape=shape,</span><br><span class="line">                       initializer=tf.contrib.layers.xavier_initializer())</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_bias_varible</span><span class="params">(name,shape)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> tf.get_variable(name, shape=shape,</span><br><span class="line">                       initializer=tf.contrib.layers.xavier_initializer())</span><br><span class="line"></span><br><span class="line"><span class="comment">#filter_shape: [f_h, f_w, f_ic, f_oc]</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">conv2d</span><span class="params">(layer_name, x, filter_shape)</span>:</span></span><br><span class="line">    <span class="keyword">with</span> tf.variable_scope(layer_name):</span><br><span class="line">        w = get_weight_varible(<span class="string">'w'</span>, filter_shape)</span><br><span class="line">        b = get_bias_varible(<span class="string">'b'</span>, filter_shape[<span class="number">-1</span>])</span><br><span class="line">        y = tf.nn.bias_add(tf.nn.conv2d(input=x, filter=w, strides=[<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>], padding=<span class="string">'SAME'</span>), b)</span><br><span class="line">        <span class="keyword">return</span> y</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pool2d</span><span class="params">(layer_name, x)</span>:</span></span><br><span class="line">    <span class="keyword">with</span> tf.variable_scope(layer_name):</span><br><span class="line">        y = tf.nn.max_pool(x, ksize=[<span class="number">1</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">1</span>], strides=[<span class="number">1</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">1</span>], padding=<span class="string">'SAME'</span>)</span><br><span class="line">        <span class="keyword">return</span> y</span><br><span class="line"></span><br><span class="line"><span class="comment">#inp_shape: [N, L]</span></span><br><span class="line"><span class="comment">#out_shape: [N, L]</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">fc</span><span class="params">(layer_name, x, inp_shape, out_shape)</span>:</span></span><br><span class="line">    <span class="keyword">with</span> tf.variable_scope(layer_name):</span><br><span class="line">        inp_dim = inp_shape[<span class="number">-1</span>]</span><br><span class="line">        out_dim = out_shape[<span class="number">-1</span>]</span><br><span class="line">        y = tf.reshape(x, shape=inp_shape)</span><br><span class="line">        w = get_weight_varible(<span class="string">'w'</span>, [inp_dim, out_dim])</span><br><span class="line">        b = get_bias_varible(<span class="string">'b'</span>, [out_dim])</span><br><span class="line">        y = tf.add(tf.matmul(y, w), b)</span><br><span class="line">        <span class="keyword">return</span> y</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">build_model</span><span class="params">(x)</span>:</span></span><br><span class="line">    y = tf.reshape(x,shape=[<span class="number">-1</span>, <span class="number">28</span>, <span class="number">28</span>, <span class="number">1</span>])</span><br><span class="line">    <span class="comment">#layer 1</span></span><br><span class="line">    y = conv2d(<span class="string">'conv_1'</span>, y, [<span class="number">3</span>, <span class="number">3</span>, <span class="number">1</span>, <span class="number">8</span>])</span><br><span class="line">    y = pool2d(<span class="string">'pool_1'</span>, y)</span><br><span class="line">    <span class="comment">#layer 2</span></span><br><span class="line">    y = conv2d(<span class="string">'conv_2'</span>, y, [<span class="number">3</span>, <span class="number">3</span>, <span class="number">8</span>, <span class="number">16</span>])</span><br><span class="line">    y = pool2d(<span class="string">'pool_2'</span>, y)</span><br><span class="line">    <span class="comment">#layer fc</span></span><br><span class="line">    y = fc(<span class="string">'fc'</span>, y, [<span class="number">-1</span>, <span class="number">7</span>*<span class="number">7</span>*<span class="number">16</span>], [<span class="number">-1</span>, <span class="number">10</span>])</span><br><span class="line">    <span class="keyword">return</span> y</span><br></pre></td></tr></table></figure></p>
+<h2 id="单GPU运行"><a href="#单GPU运行" class="headerlink" title="单GPU运行"></a>单GPU运行</h2><p>非常简单，不多说，直接上代码：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">single_gpu</span><span class="params">()</span>:</span></span><br><span class="line">    batch_size = <span class="number">128</span></span><br><span class="line">    mnist = input_data.read_data_sets(<span class="string">'/tmp/data/mnist'</span>,one_hot=<span class="keyword">True</span>)</span><br><span class="line"></span><br><span class="line">    tf.reset_default_graph()</span><br><span class="line">    <span class="keyword">with</span> tf.Session() <span class="keyword">as</span> sess:</span><br><span class="line">            print(<span class="string">'build model...'</span>)</span><br><span class="line">			x = tf.placeholder(tf.float32, [<span class="keyword">None</span>, <span class="number">784</span>])</span><br><span class="line">			y = tf.placeholder(tf.float32, [<span class="keyword">None</span>, <span class="number">10</span>])</span><br><span class="line">			pred = build_model(x)</span><br><span class="line">			loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=pred, labels=y))</span><br><span class="line">			learning_rate = tf.placeholder(tf.float32, shape=[])</span><br><span class="line">			train_op = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(loss)            </span><br><span class="line"></span><br><span class="line">            all_y = tf.reshape(y, [<span class="number">-1</span>,<span class="number">10</span>])</span><br><span class="line">            all_pred = tf.reshape(pred, [<span class="number">-1</span>,<span class="number">10</span>])</span><br><span class="line">            correct_pred = tf.equal(tf.argmax(all_y, <span class="number">1</span>), tf.argmax(all_pred, <span class="number">1</span>))</span><br><span class="line">            accuracy = tf.reduce_mean(tf.cast(correct_pred, <span class="string">'float'</span>))</span><br><span class="line"></span><br><span class="line">            print(<span class="string">'run train op...'</span>)</span><br><span class="line">            sess.run(tf.global_variables_initializer())</span><br><span class="line">            lr = <span class="number">0.01</span></span><br><span class="line">            <span class="keyword">for</span> epoch <span class="keyword">in</span> range(<span class="number">2</span>):</span><br><span class="line">                start_time = time.time()</span><br><span class="line">                total_batch = int(mnist.train.num_examples/batch_size)</span><br><span class="line">                avg_loss = <span class="number">0.0</span></span><br><span class="line">                print(<span class="string">'\n---------------------'</span>)</span><br><span class="line">                print(<span class="string">'Epoch:%d, lr:%.4f'</span> % (epoch,lr))</span><br><span class="line">                <span class="keyword">for</span> batch_idx <span class="keyword">in</span> range(total_batch):</span><br><span class="line">                    batch_x,batch_y = mnist.train.next_batch(batch_size)</span><br><span class="line">                    inp_dict = &#123;&#125;</span><br><span class="line">                    inp_dict[learning_rate] = lr</span><br><span class="line">                    inp_dict[x] = batch_x</span><br><span class="line">                    inp_dict[y] = batch_y</span><br><span class="line">                    _, _loss = sess.run([train_op, loss], inp_dict)</span><br><span class="line">                    avg_loss += _loss</span><br><span class="line">                avg_loss /= total_batch</span><br><span class="line">                print(<span class="string">'Train loss:%.4f'</span> % (avg_loss))</span><br><span class="line">                lr = max(lr * <span class="number">0.7</span>,<span class="number">0.00001</span>)</span><br><span class="line"></span><br><span class="line">                total_batch = int(mnist.validation.num_examples / batch_size)</span><br><span class="line">                preds = <span class="keyword">None</span></span><br><span class="line">                ys = <span class="keyword">None</span></span><br><span class="line">                <span class="keyword">for</span> batch_idx <span class="keyword">in</span> range(total_batch):</span><br><span class="line">                    batch_x,batch_y = mnist.validation.next_batch(batch_size)</span><br><span class="line">                    inp_dict = &#123;&#125;</span><br><span class="line">                    inp_dict[x] = batch_x</span><br><span class="line">                    inp_dict[y] = batch_y</span><br><span class="line">                    batch_pred,batch_y = sess.run([all_pred,all_y], inp_dict)</span><br><span class="line">                    <span class="keyword">if</span> preds <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">                        preds = batch_pred</span><br><span class="line">                    <span class="keyword">else</span>:</span><br><span class="line">                        preds = np.concatenate((preds, batch_pred), <span class="number">0</span>)</span><br><span class="line">                    <span class="keyword">if</span> ys <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">                        ys = batch_y</span><br><span class="line">                    <span class="keyword">else</span>:</span><br><span class="line">                        ys = np.concatenate((ys,batch_y),<span class="number">0</span>)</span><br><span class="line">                val_accuracy = sess.run([accuracy], &#123;all_y:ys, all_pred:preds&#125;)[<span class="number">0</span>]</span><br><span class="line">                print(<span class="string">'Val Accuracy: %0.4f%%'</span> % (<span class="number">100.0</span> * val_accuracy))</span><br><span class="line"></span><br><span class="line">                stop_time = time.time()</span><br><span class="line">                elapsed_time = stop_time - start_time</span><br><span class="line">                print(<span class="string">'Cost time: '</span> + str(elapsed_time) + <span class="string">' sec.'</span>)</span><br><span class="line">            print(<span class="string">'training done.'</span>)</span><br></pre></td></tr></table></figure></p>
+<h2 id="多GPU运行"><a href="#多GPU运行" class="headerlink" title="多GPU运行"></a>多GPU运行</h2><p>与单GPU相比，多GPU模型需要手动指定OP的device，各个device之间的变量共享，最后在CPU上综合loss与梯度、准确率等，CPU上应用梯度更新权值。<br>需要对TensorFlow的图计算依赖有一定理解，即需要获取目标数据时，TensorFlow只会计算该数据所以来的相关操作。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br></pre></td><td class="code"><pre><span class="line">def average_losses(loss):</span><br><span class="line">    tf.add_to_collection(&apos;losses&apos;, loss)</span><br><span class="line"></span><br><span class="line">    # Assemble all of the losses for the current tower only.</span><br><span class="line">    losses = tf.get_collection(&apos;losses&apos;)</span><br><span class="line"></span><br><span class="line">    # Calculate the total loss for the current tower.</span><br><span class="line">    regularization_losses = tf.get_collection(tf.GraphKeys.REGULARIZATION_LOSSES)</span><br><span class="line">    total_loss = tf.add_n(losses + regularization_losses, name=&apos;total_loss&apos;)</span><br><span class="line"></span><br><span class="line">    # Compute the moving average of all individual losses and the total loss.</span><br><span class="line">    loss_averages = tf.train.ExponentialMovingAverage(0.9, name=&apos;avg&apos;)</span><br><span class="line">    loss_averages_op = loss_averages.apply(losses + [total_loss])</span><br><span class="line"></span><br><span class="line">    with tf.control_dependencies([loss_averages_op]):</span><br><span class="line">        total_loss = tf.identity(total_loss)</span><br><span class="line">    return total_loss</span><br><span class="line"></span><br><span class="line">def average_gradients(tower_grads):</span><br><span class="line">    average_grads = []</span><br><span class="line">    for grad_and_vars in zip(*tower_grads):</span><br><span class="line">        # Note that each grad_and_vars looks like the following:</span><br><span class="line">        #   ((grad0_gpu0, var0_gpu0), ... , (grad0_gpuN, var0_gpuN))</span><br><span class="line">        grads = [g for g, _ in grad_and_vars]</span><br><span class="line">        # Average over the &apos;tower&apos; dimension.</span><br><span class="line">        grad = tf.stack(grads, 0)</span><br><span class="line">        grad = tf.reduce_mean(grad, 0)</span><br><span class="line"></span><br><span class="line">        # Keep in mind that the Variables are redundant because they are shared</span><br><span class="line">        # across towers. So .. we will just return the first tower&apos;s pointer to</span><br><span class="line">        # the Variable.</span><br><span class="line">        v = grad_and_vars[0][1]</span><br><span class="line">        grad_and_var = (grad, v)</span><br><span class="line">        average_grads.append(grad_and_var)</span><br><span class="line">    return average_grads</span><br><span class="line"></span><br><span class="line">def feed_all_gpu(inp_dict, models, payload_per_gpu, batch_x, batch_y):</span><br><span class="line">    for i in range(len(models)):</span><br><span class="line">        x, y, _, _, _ = models[i]</span><br><span class="line">        start_pos = i * payload_per_gpu</span><br><span class="line">        stop_pos = (i + 1) * payload_per_gpu</span><br><span class="line">        inp_dict[x] = batch_x[start_pos:stop_pos]</span><br><span class="line">        inp_dict[y] = batch_y[start_pos:stop_pos]</span><br><span class="line">    return inp_dict</span><br><span class="line">	</span><br><span class="line">def multi_gpu(num_gpu):</span><br><span class="line">    batch_size = 128 * num_gpu</span><br><span class="line">    mnist = input_data.read_data_sets(&apos;/tmp/data/mnist&apos;,one_hot=True)</span><br><span class="line"></span><br><span class="line">    tf.reset_default_graph()</span><br><span class="line">    with tf.Session() as sess:</span><br><span class="line">        with tf.device(&apos;/cpu:0&apos;):</span><br><span class="line">            learning_rate = tf.placeholder(tf.float32, shape=[])</span><br><span class="line">            opt = tf.train.AdamOptimizer(learning_rate=learning_rate)</span><br><span class="line"></span><br><span class="line">            print(&apos;build model...&apos;)</span><br><span class="line">            print(&apos;build model on gpu tower...&apos;)</span><br><span class="line">            models = []</span><br><span class="line">            for gpu_id in range(num_gpu):</span><br><span class="line">                with tf.device(&apos;/gpu:%d&apos; % gpu_id):</span><br><span class="line">                    print(&apos;tower:%d...&apos;% gpu_id)</span><br><span class="line">                    with tf.name_scope(&apos;tower_%d&apos; % gpu_id):</span><br><span class="line">                        with tf.variable_scope(&apos;cpu_variables&apos;, reuse=gpu_id&gt;0):</span><br><span class="line">                            x = tf.placeholder(tf.float32, [None, 784])</span><br><span class="line">                            y = tf.placeholder(tf.float32, [None, 10])</span><br><span class="line">                            pred = build_model(x)</span><br><span class="line">                            loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=pred, labels=y))</span><br><span class="line">                            grads = opt.compute_gradients(loss)</span><br><span class="line">                            models.append((x,y,pred,loss,grads))</span><br><span class="line">            print(&apos;build model on gpu tower done.&apos;)</span><br><span class="line"></span><br><span class="line">            print(&apos;reduce model on cpu...&apos;)</span><br><span class="line">            tower_x, tower_y, tower_preds, tower_losses, tower_grads = zip(*models)</span><br><span class="line">            aver_loss_op = tf.reduce_mean(tower_losses)</span><br><span class="line">            apply_gradient_op = opt.apply_gradients(average_gradients(tower_grads))</span><br><span class="line"></span><br><span class="line">            all_y = tf.reshape(tf.stack(tower_y, 0), [-1,10])</span><br><span class="line">            all_pred = tf.reshape(tf.stack(tower_preds, 0), [-1,10])</span><br><span class="line">            correct_pred = tf.equal(tf.argmax(all_y, 1), tf.argmax(all_pred, 1))</span><br><span class="line">            accuracy = tf.reduce_mean(tf.cast(correct_pred, &apos;float&apos;))</span><br><span class="line">            print(&apos;reduce model on cpu done.&apos;)</span><br><span class="line"></span><br><span class="line">            print(&apos;run train op...&apos;)</span><br><span class="line">            sess.run(tf.global_variables_initializer())</span><br><span class="line">            lr = 0.01</span><br><span class="line">            for epoch in range(2):</span><br><span class="line">                start_time = time.time()</span><br><span class="line">                payload_per_gpu = batch_size/num_gpu</span><br><span class="line">                total_batch = int(mnist.train.num_examples/batch_size)</span><br><span class="line">                avg_loss = 0.0</span><br><span class="line">                print(&apos;\n---------------------&apos;)</span><br><span class="line">                print(&apos;Epoch:%d, lr:%.4f&apos; % (epoch,lr))</span><br><span class="line">                for batch_idx in range(total_batch):</span><br><span class="line">                    batch_x,batch_y = mnist.train.next_batch(batch_size)</span><br><span class="line">                    inp_dict = &#123;&#125;</span><br><span class="line">                    inp_dict[learning_rate] = lr</span><br><span class="line">                    inp_dict = feed_all_gpu(inp_dict, models, payload_per_gpu, batch_x, batch_y)</span><br><span class="line">                    _, _loss = sess.run([apply_gradient_op, aver_loss_op], inp_dict)</span><br><span class="line">                    avg_loss += _loss</span><br><span class="line">                avg_loss /= total_batch</span><br><span class="line">                print(&apos;Train loss:%.4f&apos; % (avg_loss))</span><br><span class="line">                lr = max(lr * 0.7,0.00001)</span><br><span class="line"></span><br><span class="line">                val_payload_per_gpu = batch_size / num_gpu</span><br><span class="line">                total_batch = int(mnist.validation.num_examples / batch_size)</span><br><span class="line">                preds = None</span><br><span class="line">                ys = None</span><br><span class="line">                for batch_idx in range(total_batch):</span><br><span class="line">                    batch_x,batch_y = mnist.validation.next_batch(batch_size)</span><br><span class="line">                    inp_dict = feed_all_gpu(&#123;&#125;, models, val_payload_per_gpu, batch_x, batch_y)</span><br><span class="line">                    batch_pred,batch_y = sess.run([all_pred,all_y], inp_dict)</span><br><span class="line">                    if preds is None:</span><br><span class="line">                        preds = batch_pred</span><br><span class="line">                    else:</span><br><span class="line">                        preds = np.concatenate((preds, batch_pred), 0)</span><br><span class="line">                    if ys is None:</span><br><span class="line">                        ys = batch_y</span><br><span class="line">                    else:</span><br><span class="line">                        ys = np.concatenate((ys,batch_y),0)</span><br><span class="line">                val_accuracy = sess.run([accuracy], &#123;all_y:ys, all_pred:preds&#125;)[0]</span><br><span class="line">                print(&apos;Val Accuracy: %0.4f%%&apos; % (100.0 * val_accuracy))</span><br><span class="line"></span><br><span class="line">                stop_time = time.time()</span><br><span class="line">                elapsed_time = stop_time-start_time</span><br><span class="line">                print(&apos;Cost time: &apos; + str(elapsed_time) + &apos; sec.&apos;)</span><br><span class="line">            print(&apos;training done.&apos;)</span><br></pre></td></tr></table></figure></p>
+<p>本文全部代码见：<a href="https://github.com/xylcbd/blogs_code/blob/master/tensorflow-mnist-multi-gpu/cnn.py" target="_blank" rel="noopener">https://github.com/xylcbd/blogs_code/blob/master/tensorflow-mnist-multi-gpu/cnn.py</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+      <div>
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/about/qrcode.jpg" alt="洪柏敏 wechat" style="width: 200px; max-width: 100%;">
+    <div>欢迎留言评论，邮件给我(dahanhbm AT gmail DOT com)，或者关注我的微信公众号</div>
+</div>
+
+      </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/TensorFlow/" rel="tag"># TensorFlow</a>
+          
+            <a href="/tags/gpu/" rel="tag"># gpu</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/06/24/tensorflow-to-easycnn/" rel="next" title="TensorFlow模型转换为EasyCNN模型">
+                <i class="fa fa-chevron-left"></i> TensorFlow模型转换为EasyCNN模型
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/06/27/usually-command-on-linux/" rel="prev" title="linux上常用的命令">
+                linux上常用的命令 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      
+        <div id="gitment-container"></div>
+      
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">洪柏敏</p>
+              <p class="site-description motion-element" itemprop="description">个人网站，学习思考总结</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">46</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">25</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">70</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/xylcbd" target="_blank" title="GitHub">
+                    
+                      <i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/xing-ye-luo-chen" target="_blank" title="ZhiHu">
+                    
+                      <i class="fa fa-fw fa-zhihu"></i>ZhiHu</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:dahanhbm@gmail.com" target="_blank" title="E-Mail">
+                    
+                      <i class="fa fa-fw fa-gmail"></i>E-Mail</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CNN模型"><span class="nav-number">2.</span> <span class="nav-text">CNN模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#单GPU运行"><span class="nav-number">3.</span> <span class="nav-text">单GPU运行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多GPU运行"><span class="nav-number">4.</span> <span class="nav-text">多GPU运行</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">洪柏敏</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+<!-- LOCAL: You can save these files to your site and update links -->
+    
+        
+        <link rel="stylesheet" href="https://aimingoo.github.io/gitmint/style/default.css">
+        <script src="https://aimingoo.github.io/gitmint/dist/gitmint.browser.js"></script>
+    
+<!-- END LOCAL -->
+
+    
+
+    
+      <script type="text/javascript">
+      function renderGitment(){
+        var gitment = new Gitmint({
+            id: window.location.pathname, 
+            owner: 'xylcbd',
+            repo: 'gitment-comments',
+            
+            lang: "" || navigator.language || navigator.systemLanguage || navigator.userLanguage,
+            
+            oauth: {
+            
+            
+                client_secret: '6206a9e33b41c30b642d93033256b456fd1d528a',
+            
+                client_id: '524a666634fb71b2f83a'
+            }});
+        gitment.render('gitment-container');
+      }
+
+      
+      renderGitment();
+      
+      </script>
+    
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("a36Qsdl9bxSSSq9Vt28ngRkk-gzGzoHsz", "gBUBOqu5qkDbk84fVTUUNdpS");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

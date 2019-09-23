@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="深度学习,笔记,PyTorch,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="竹杖芒鞋轻胜马，一蓑烟雨任平生" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="最近学习了下PyTorch的使用，感觉这种“所见即所得”的网络构建运行方式确实方便，比TensorFlow之类的先定义静态图然后再run的方式要灵活很多，调试也方便不少。 学习过程中也有一些疑惑，记录下来备忘。 PyTorch零散的知识 默认只有叶子节点才保持梯度，如： 1A = Variable(torch.ones(2), requires_grad = True)  在中间节点可以设置保持梯">
+<meta name="keywords" content="深度学习,笔记,PyTorch">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PyTorch学习笔记">
+<meta property="og:url" content="http://hongbomin.com/2018/03/15/pytorch_notes/index.html">
+<meta property="og:site_name" content="竹杖芒鞋轻胜马，一蓑烟雨任平生">
+<meta property="og:description" content="最近学习了下PyTorch的使用，感觉这种“所见即所得”的网络构建运行方式确实方便，比TensorFlow之类的先定义静态图然后再run的方式要灵活很多，调试也方便不少。 学习过程中也有一些疑惑，记录下来备忘。 PyTorch零散的知识 默认只有叶子节点才保持梯度，如： 1A = Variable(torch.ones(2), requires_grad = True)  在中间节点可以设置保持梯">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-09-23T07:01:34.203Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="PyTorch学习笔记">
+<meta name="twitter:description" content="最近学习了下PyTorch的使用，感觉这种“所见即所得”的网络构建运行方式确实方便，比TensorFlow之类的先定义静态图然后再run的方式要灵活很多，调试也方便不少。 学习过程中也有一些疑惑，记录下来备忘。 PyTorch零散的知识 默认只有叶子节点才保持梯度，如： 1A = Variable(torch.ones(2), requires_grad = True)  在中间节点可以设置保持梯">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://hongbomin.com/2018/03/15/pytorch_notes/">
+
+
+
+
+
+  <title>PyTorch学习笔记 | 竹杖芒鞋轻胜马，一蓑烟雨任平生</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?23a58b060800f89fe2c9907f73bc0fdf";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">竹杖芒鞋轻胜马，一蓑烟雨任平生</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">don't worry,be happy.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://hongbomin.com/2018/03/15/pytorch_notes/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="洪柏敏">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="竹杖芒鞋轻胜马，一蓑烟雨任平生">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">PyTorch学习笔记</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-15T19:19:03+08:00">
+                2018-03-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/深度学习/" itemprop="url" rel="index">
+                    <span itemprop="name">深度学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/03/15/pytorch_notes/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count gitment-comments-count" data-xid="/2018/03/15/pytorch_notes/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2018/03/15/pytorch_notes/" class="leancloud_visitors" data-flag-title="PyTorch学习笔记">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>最近学习了下PyTorch的使用，感觉这种“所见即所得”的网络构建运行方式确实方便，比TensorFlow之类的先定义静态图然后再run的方式要灵活很多，调试也方便不少。</p>
+<p>学习过程中也有一些疑惑，记录下来备忘。</p>
+<h3 id="PyTorch零散的知识"><a href="#PyTorch零散的知识" class="headerlink" title="PyTorch零散的知识"></a>PyTorch零散的知识</h3><ul>
+<li><p>默认只有叶子节点才保持梯度，如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">A = Variable(torch.ones(<span class="number">2</span>), requires_grad = <span class="keyword">True</span>)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在中间节点可以设置保持梯度，如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">A = Variable(torch.ones(<span class="number">2</span>), requires_grad = <span class="keyword">True</span>)</span><br><span class="line">B = A*<span class="number">2</span> </span><br><span class="line">B.retain_grad()</span><br><span class="line">C = B.norm()</span><br><span class="line">C.backward()</span><br><span class="line"><span class="keyword">print</span> B.grad</span><br><span class="line"></span><br><span class="line"><span class="comment">#outputs</span></span><br><span class="line">Variable containing:</span><br><span class="line"><span class="number">0.7071</span></span><br><span class="line"><span class="number">0.7071</span></span><br><span class="line">[torch.FloatTensor of size <span class="number">2</span>]</span><br></pre></td></tr></table></figure>
+<p>也可以设置hook输出梯度：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">A = Variable(torch.ones(<span class="number">2</span>), requires_grad = <span class="keyword">True</span>)</span><br><span class="line">B = A*<span class="number">2</span> </span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">show_grad</span><span class="params">(grad)</span>:</span></span><br><span class="line">    print(grad)</span><br><span class="line">B.register_hook(show_grad)</span><br><span class="line">C = B.norm()</span><br><span class="line">C.backward()</span><br><span class="line"><span class="comment">#...</span></span><br><span class="line"><span class="comment">#grad show be auto displayed after grad of B is generated</span></span><br><span class="line"><span class="comment">#outputs</span></span><br><span class="line">Variable containing:</span><br><span class="line"><span class="number">0.7071</span></span><br><span class="line"><span class="number">0.7071</span></span><br><span class="line">[torch.FloatTensor of size <span class="number">2</span>]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>每一个非叶子节点都会保存其创建，如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># not B.creator now, ref: https://github.com/pytorch/tutorials/pull/91/files</span></span><br><span class="line"><span class="keyword">print</span> B.grad_fn </span><br><span class="line">&lt;MulBackward0 object at <span class="number">0x7f3b0536f710</span>&gt;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>早期PyTorch的执行模型参见：<a href="https://github.com/pytorch/pytorch/blob/v0.1.1/torch/autograd/function.py" target="_blank" rel="noopener">function.py</a>、<a href="https://github.com/pytorch/pytorch/blob/v0.1.1/torch/autograd/engine.py" target="_blank" rel="noopener">engine.py</a>  </p>
+</li>
+<li><p>backward只能由结果是标量的operator执行，比如：nn.CrossEntropyLoss。原因暂不明。</p>
+</li>
+<li><p>Variable包含一些Inplcae操作（其requires_grad不能为True），均以下划线“_”结尾，如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">A = Variable(torch.ones(<span class="number">2</span>), requires_grad = <span class="keyword">False</span>)</span><br><span class="line">A.fill_(<span class="number">3.0</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#outputs</span></span><br><span class="line">Variable containing:</span><br><span class="line"> <span class="number">3</span></span><br><span class="line"> <span class="number">3</span></span><br><span class="line">[torch.FloatTensor of size <span class="number">2</span>]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Storage与Tensor的概念：Storage是实际内存（1维），Tensor是对Storage的信息描述。</p>
+</li>
+<li><p>自动求导原理： <a href="http://pytorch.org/docs/0.3.1/notes/autograd.html" target="_blank" rel="noopener">autograd</a></p>
+</li>
+<li><p>设置CUDA同步执行，设置环境变量：CUDA_LAUNCH_BLOCKING=1，或者使用copy_强制同步</p>
+</li>
+<li><p>PyTorch多进程作用和使用</p>
+</li>
+<li><p>PyTorch的模型存取，2种方式：<br>1.读取参数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#save model</span></span><br><span class="line">torch.save(the_model.state_dict(), PATH)</span><br><span class="line"> </span><br><span class="line"><span class="comment">#load model</span></span><br><span class="line">the_model = TheModelClass(*args, **kwargs)</span><br><span class="line">the_model.load_state_dict(torch.load(PATH))</span><br></pre></td></tr></table></figure>
+<p>2.读取模型</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#save model</span></span><br><span class="line">torch.save(the_model, PATH)</span><br><span class="line"></span><br><span class="line"><span class="comment">#load model</span></span><br><span class="line">the_model = torch.load(PATH)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>CrossEntropyLoss与NLLLoss不同。前者是Softmax与CrossEntropy的组合，在Loss之前不要再加Softmax；后者只是CrossEntropy，需要在Loss之前加Softmax。</p>
+</li>
+<li><p>默认为training状态，在test时需要设置为module.eval()或者module.train(False)</p>
+<blockquote>
+<ul>
+<li>在训练每个batch之前记得加model.train()，训练完若干个iteration之后在验证前记得加model.eval()。否则会影响dropout和BN。  </li>
+<li>用F.dropout()时一定要手动设参数self.training，正确用法：F.dropout(x, 0.2, self.training)。  </li>
+<li>reference: <a href="https://www.zhihu.com/question/67209417/answer/303214329" target="_blank" rel="noopener">https://www.zhihu.com/question/67209417/answer/303214329</a></li>
+</ul>
+</blockquote>
+</li>
+<li><p>Tensor.unsqueeze与Tensor.view作用类似，在某个地方插入一个维度（1）</p>
+</li>
+<li><p>Tensor.contiguous将Tensor内可能是不同的内存块整理为一块连续的内存，如果本来就是连续的则不作操作。</p>
+</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+      <div>
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/about/qrcode.jpg" alt="洪柏敏 wechat" style="width: 200px; max-width: 100%;">
+    <div>欢迎留言评论，邮件给我(dahanhbm AT gmail DOT com)，或者关注我的微信公众号</div>
+</div>
+
+      </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/深度学习/" rel="tag"># 深度学习</a>
+          
+            <a href="/tags/笔记/" rel="tag"># 笔记</a>
+          
+            <a href="/tags/PyTorch/" rel="tag"># PyTorch</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/03/04/algorithm-python-knn/" rel="next" title="Python算法系列：KNN（K近邻算法）">
+                <i class="fa fa-chevron-left"></i> Python算法系列：KNN（K近邻算法）
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/04/09/pytorch_warpctc_build/" rel="prev" title="PyTorch之warp-ctc binding编译问题">
+                PyTorch之warp-ctc binding编译问题 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      
+        <div id="gitment-container"></div>
+      
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">洪柏敏</p>
+              <p class="site-description motion-element" itemprop="description">个人网站，学习思考总结</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">46</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">25</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">70</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/xylcbd" target="_blank" title="GitHub">
+                    
+                      <i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/xing-ye-luo-chen" target="_blank" title="ZhiHu">
+                    
+                      <i class="fa fa-fw fa-zhihu"></i>ZhiHu</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:dahanhbm@gmail.com" target="_blank" title="E-Mail">
+                    
+                      <i class="fa fa-fw fa-gmail"></i>E-Mail</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#PyTorch零散的知识"><span class="nav-number">1.</span> <span class="nav-text">PyTorch零散的知识</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">洪柏敏</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+<!-- LOCAL: You can save these files to your site and update links -->
+    
+        
+        <link rel="stylesheet" href="https://aimingoo.github.io/gitmint/style/default.css">
+        <script src="https://aimingoo.github.io/gitmint/dist/gitmint.browser.js"></script>
+    
+<!-- END LOCAL -->
+
+    
+
+    
+      <script type="text/javascript">
+      function renderGitment(){
+        var gitment = new Gitmint({
+            id: window.location.pathname, 
+            owner: 'xylcbd',
+            repo: 'gitment-comments',
+            
+            lang: "" || navigator.language || navigator.systemLanguage || navigator.userLanguage,
+            
+            oauth: {
+            
+            
+                client_secret: '6206a9e33b41c30b642d93033256b456fd1d528a',
+            
+                client_id: '524a666634fb71b2f83a'
+            }});
+        gitment.render('gitment-container');
+      }
+
+      
+      renderGitment();
+      
+      </script>
+    
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("a36Qsdl9bxSSSq9Vt28ngRkk-gzGzoHsz", "gBUBOqu5qkDbk84fVTUUNdpS");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

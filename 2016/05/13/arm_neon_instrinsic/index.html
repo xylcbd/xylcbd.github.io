@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="arm,neon,性能优化,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="竹杖芒鞋轻胜马，一蓑烟雨任平生" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="前言本系列博文用于介绍ARM CPU下NEON指令优化。    博文github地址：github   相关代码github地址：github  NEON指令集主流支持目标平台为ARM CPU的编译器基本都支持NEON指令。可以通过在代码中嵌入NEON汇编来使用NEON，但是更加常见的方式是通过类似C函数的NEON Instrinsic来编写NEON代码。就如同NEON hello world一样">
+<meta name="keywords" content="arm,neon,性能优化">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ARM NEON 编程系列2 - 基本指令集">
+<meta property="og:url" content="http://hongbomin.com/2016/05/13/arm_neon_instrinsic/index.html">
+<meta property="og:site_name" content="竹杖芒鞋轻胜马，一蓑烟雨任平生">
+<meta property="og:description" content="前言本系列博文用于介绍ARM CPU下NEON指令优化。    博文github地址：github   相关代码github地址：github  NEON指令集主流支持目标平台为ARM CPU的编译器基本都支持NEON指令。可以通过在代码中嵌入NEON汇编来使用NEON，但是更加常见的方式是通过类似C函数的NEON Instrinsic来编写NEON代码。就如同NEON hello world一样">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-09-23T07:01:34.153Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ARM NEON 编程系列2 - 基本指令集">
+<meta name="twitter:description" content="前言本系列博文用于介绍ARM CPU下NEON指令优化。    博文github地址：github   相关代码github地址：github  NEON指令集主流支持目标平台为ARM CPU的编译器基本都支持NEON指令。可以通过在代码中嵌入NEON汇编来使用NEON，但是更加常见的方式是通过类似C函数的NEON Instrinsic来编写NEON代码。就如同NEON hello world一样">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://hongbomin.com/2016/05/13/arm_neon_instrinsic/">
+
+
+
+
+
+  <title>ARM NEON 编程系列2 - 基本指令集 | 竹杖芒鞋轻胜马，一蓑烟雨任平生</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?23a58b060800f89fe2c9907f73bc0fdf";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">竹杖芒鞋轻胜马，一蓑烟雨任平生</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">don't worry,be happy.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://hongbomin.com/2016/05/13/arm_neon_instrinsic/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="洪柏敏">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="竹杖芒鞋轻胜马，一蓑烟雨任平生">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">ARM NEON 编程系列2 - 基本指令集</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-05-13T21:34:43+08:00">
+                2016-05-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/性能优化/" itemprop="url" rel="index">
+                    <span itemprop="name">性能优化</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2016/05/13/arm_neon_instrinsic/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count gitment-comments-count" data-xid="/2016/05/13/arm_neon_instrinsic/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2016/05/13/arm_neon_instrinsic/" class="leancloud_visitors" data-flag-title="ARM NEON 编程系列2 - 基本指令集">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>本系列博文用于介绍ARM CPU下NEON指令优化。  </p>
+<ul>
+<li>博文github地址：<a href="https://github.com/xylcbd/blogs" title="博文" target="_blank" rel="noopener">github</a>  </li>
+<li>相关代码github地址：<a href="https://github.com/xylcbd/blogs_code" title="博文相关demo" target="_blank" rel="noopener">github</a></li>
+</ul>
+<h2 id="NEON指令集"><a href="#NEON指令集" class="headerlink" title="NEON指令集"></a>NEON指令集</h2><p>主流支持目标平台为ARM CPU的编译器基本都支持NEON指令。可以通过在代码中嵌入NEON汇编来使用NEON，但是更加常见的方式是通过类似C函数的NEON Instrinsic来编写NEON代码。就如同<a href="2016_04_16_10_56_arm_neon_introduction.md" title="上一篇博文中的hello world代码">NEON hello world</a>一样。NEON Instrinsic是编译器支持的一种buildin类型和函数的集合，基本涵盖NEON的所有指令，通常这些Instrinsic包含在arm_neon.h头文件中。<br>本文以android-ndk-r11c中armv7的arm_neon.h为例，讲解NEON的指令类型。  </p>
+<h2 id="寄存器"><a href="#寄存器" class="headerlink" title="寄存器"></a>寄存器</h2><p>ARMV7架构包含：  </p>
+<ul>
+<li>16个通用寄存器（32bit），R0-R15</li>
+<li>16个NEON寄存器（128bit），Q0-Q15（同时也可以被视为32个64bit的寄存器，D0-D31）</li>
+<li>16个VFP寄存器（32bit），S0-S15  <blockquote>
+<p>NEON和VFP的区别在于VFP是加速浮点计算的硬件不具备数据并行能力，同时VFP更尽兴双精度浮点数（double）的计算，NEON只有单精度浮点计算能力。更多请参考<a href="http://stackoverflow.com/questions/4097034/arm-cortex-a8-whats-the-difference-between-vfp-and-neon" title="neon vs vfp" target="_blank" rel="noopener">stackoverflow:neon vs vfp</a></p>
+</blockquote>
+</li>
+</ul>
+<h2 id="基本数据类型"><a href="#基本数据类型" class="headerlink" title="基本数据类型"></a>基本数据类型</h2><ul>
+<li><p>64bit数据类型，映射至寄存器即为D0-D31<br>相应的c/c++语言类型（stdint.h或者csdtint头文件中类型）在注释中说明。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//typedef int8_t[8] int8x8_t;</span></span><br><span class="line"><span class="keyword">typedef</span> __builtin_neon_qi <span class="keyword">int8x8_t</span>	__attribute__ ((__vector_size__ (<span class="number">8</span>)));</span><br><span class="line"><span class="comment">//typedef int16_t[4] int16x4_t;</span></span><br><span class="line"><span class="keyword">typedef</span> __builtin_neon_hi <span class="keyword">int16x4_t</span>	__attribute__ ((__vector_size__ (<span class="number">8</span>)));</span><br><span class="line"><span class="comment">//typedef int32_t[2] int32x2_t;</span></span><br><span class="line"><span class="keyword">typedef</span> __builtin_neon_si <span class="keyword">int32x2_t</span>	__attribute__ ((__vector_size__ (<span class="number">8</span>)));</span><br><span class="line"><span class="comment">//typedef int64_t[1] int64x1_t;</span></span><br><span class="line"><span class="keyword">typedef</span> __builtin_neon_di <span class="keyword">int64x1_t</span>;</span><br><span class="line"><span class="comment">//typedef float16_t[4] float16x4_t;</span></span><br><span class="line"><span class="comment">//（注：该类型为半精度，在部分新的CPU上支持，c/c++语言标注中尚无此基本数据类型）</span></span><br><span class="line"><span class="keyword">typedef</span> __builtin_neon_hf <span class="keyword">float16x4_t</span>	__attribute__ ((__vector_size__ (<span class="number">8</span>)));</span><br><span class="line"><span class="comment">//typedef float32_t[2] float32x2_t;</span></span><br><span class="line"><span class="keyword">typedef</span> __builtin_neon_sf <span class="keyword">float32x2_t</span>	__attribute__ ((__vector_size__ (<span class="number">8</span>)));</span><br><span class="line"><span class="comment">//poly8以及poly16类型在常用算法中基本不会使用</span></span><br><span class="line"><span class="comment">//详细解释见：</span></span><br><span class="line"><span class="comment">//http://stackoverflow.com/questions/22224282/arm-neon-and-poly8-t-and-poly16-t</span></span><br><span class="line"><span class="keyword">typedef</span> __builtin_neon_poly8 <span class="keyword">poly8x8_t</span>	__attribute__ ((__vector_size__ (<span class="number">8</span>)));</span><br><span class="line"><span class="keyword">typedef</span> __builtin_neon_poly16 <span class="keyword">poly16x4_t</span>	__attribute__ ((__vector_size__ (<span class="number">8</span>)));</span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __ARM_FEATURE_CRYPTO</span></span><br><span class="line"><span class="keyword">typedef</span> __builtin_neon_poly64 <span class="keyword">poly64x1_t</span>;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"><span class="comment">//typedef uint8_t[8] uint8x8_t;</span></span><br><span class="line"><span class="keyword">typedef</span> __builtin_neon_uqi <span class="keyword">uint8x8_t</span>	__attribute__ ((__vector_size__ (<span class="number">8</span>)));</span><br><span class="line"><span class="comment">//typedef uint16_t[4] uint16x4_t;</span></span><br><span class="line"><span class="keyword">typedef</span> __builtin_neon_uhi <span class="keyword">uint16x4_t</span>	__attribute__ ((__vector_size__ (<span class="number">8</span>)));</span><br><span class="line"><span class="comment">//typedef uint32_t[2] uint32x2_t;</span></span><br><span class="line"><span class="keyword">typedef</span> __builtin_neon_usi <span class="keyword">uint32x2_t</span>	__attribute__ ((__vector_size__ (<span class="number">8</span>)));</span><br><span class="line"><span class="comment">//typedef uint64_t[1] uint64x1_t;</span></span><br><span class="line"><span class="keyword">typedef</span> __builtin_neon_udi <span class="keyword">uint64x1_t</span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>128bit数据类型，映射至寄存器即为Q0-Q15<br>相应的c/c++语言类型（stdint.h或者csdtint头文件中类型）在注释中说明。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//typedef int8_t[16] int8x16_t;</span></span><br><span class="line"><span class="keyword">typedef</span> __builtin_neon_qi <span class="keyword">int8x16_t</span>	__attribute__ ((__vector_size__ (<span class="number">16</span>)));</span><br><span class="line"><span class="comment">//typedef int16_t[8] int16x8_t;</span></span><br><span class="line"><span class="keyword">typedef</span> __builtin_neon_hi <span class="keyword">int16x8_t</span>	__attribute__ ((__vector_size__ (<span class="number">16</span>)));</span><br><span class="line"><span class="comment">//typedef int32_t[4] int32x4_t;</span></span><br><span class="line"><span class="keyword">typedef</span> __builtin_neon_si <span class="keyword">int32x4_t</span>	__attribute__ ((__vector_size__ (<span class="number">16</span>)));</span><br><span class="line"><span class="comment">//typedef int64_t[2] int64x2_t;</span></span><br><span class="line"><span class="keyword">typedef</span> __builtin_neon_di <span class="keyword">int64x2_t</span>	__attribute__ ((__vector_size__ (<span class="number">16</span>)));</span><br><span class="line"><span class="comment">//typedef float32_t[4] float32x4_t;</span></span><br><span class="line"><span class="keyword">typedef</span> __builtin_neon_sf <span class="keyword">float32x4_t</span>	__attribute__ ((__vector_size__ (<span class="number">16</span>)));</span><br><span class="line"><span class="comment">//poly8以及poly16类型在常用算法中基本不会使用</span></span><br><span class="line"><span class="comment">//详细解释见：</span></span><br><span class="line"><span class="comment">//http://stackoverflow.com/questions/22224282/arm-neon-and-poly8-t-and-poly16-t</span></span><br><span class="line"><span class="keyword">typedef</span> __builtin_neon_poly8 <span class="keyword">poly8x16_t</span>	__attribute__ ((__vector_size__ (<span class="number">16</span>)));</span><br><span class="line"><span class="keyword">typedef</span> __builtin_neon_poly16 <span class="keyword">poly16x8_t</span>	__attribute__ ((__vector_size__ (<span class="number">16</span>)));</span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __ARM_FEATURE_CRYPTO</span></span><br><span class="line"><span class="keyword">typedef</span> __builtin_neon_poly64 <span class="keyword">poly64x2_t</span>	__attribute__ ((__vector_size__ (<span class="number">16</span>)));</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"><span class="comment">//typedef uint8_t[16] uint8x16_t;</span></span><br><span class="line"><span class="keyword">typedef</span> __builtin_neon_uqi <span class="keyword">uint8x16_t</span>	__attribute__ ((__vector_size__ (<span class="number">16</span>)));</span><br><span class="line"><span class="comment">//typedef uint16_t[8] uint16x8_t;</span></span><br><span class="line"><span class="keyword">typedef</span> __builtin_neon_uhi <span class="keyword">uint16x8_t</span>	__attribute__ ((__vector_size__ (<span class="number">16</span>)));</span><br><span class="line"><span class="comment">//typedef uint32_t[4] uint32x4_t;</span></span><br><span class="line"><span class="keyword">typedef</span> __builtin_neon_usi <span class="keyword">uint32x4_t</span>	__attribute__ ((__vector_size__ (<span class="number">16</span>)));</span><br><span class="line"><span class="comment">//typedef uint64_t[2] uint64x2_t;</span></span><br><span class="line"><span class="keyword">typedef</span> __builtin_neon_udi <span class="keyword">uint64x2_t</span>	__attribute__ ((__vector_size__ (<span class="number">16</span>)));</span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">float</span> <span class="keyword">float32_t</span>;</span><br><span class="line"><span class="keyword">typedef</span> __builtin_neon_poly8 <span class="keyword">poly8_t</span>;</span><br><span class="line"><span class="keyword">typedef</span> __builtin_neon_poly16 <span class="keyword">poly16_t</span>;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __ARM_FEATURE_CRYPTO</span></span><br><span class="line"><span class="keyword">typedef</span> __builtin_neon_poly64 <span class="keyword">poly64_t</span>;</span><br><span class="line"><span class="keyword">typedef</span> __builtin_neon_poly128 <span class="keyword">poly128_t</span>;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="结构化数据类型"><a href="#结构化数据类型" class="headerlink" title="结构化数据类型"></a>结构化数据类型</h2><p>下面这些数据类型是上述基本数据类型的组合而成的结构化数据类型，通常为被映射到多个寄存器中。<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">int8x8x2_t</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">  <span class="keyword">int8x8_t</span> val[<span class="number">2</span>];</span><br><span class="line">&#125; <span class="keyword">int8x8x2_t</span>;</span><br><span class="line">...</span><br><span class="line"><span class="comment">//省略...</span></span><br><span class="line">...</span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __ARM_FEATURE_CRYPTO</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">poly64x2x4_t</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">  <span class="keyword">poly64x2_t</span> val[<span class="number">4</span>];</span><br><span class="line">&#125; <span class="keyword">poly64x2x4_t</span>;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure></p>
+<h2 id="基本指令集"><a href="#基本指令集" class="headerlink" title="基本指令集"></a>基本指令集</h2><p>NEON指令按照操作数类型可以分为正常指令、宽指令、窄指令、饱和指令、长指令。  </p>
+<blockquote>
+<ul>
+<li>正常指令：生成大小相同且类型通常与操作数向量相同到结果向量。  </li>
+<li>长指令：对双字向量操作数执行运算，生产四字向量到结果。所生成的元素一般是操作数元素宽度到两倍，并属于同一类型。L标记，如VMOVL。  </li>
+<li>宽指令：一个双字向量操作数和一个四字向量操作数执行运算，生成四字向量结果。W标记，如VADDW。  </li>
+<li>窄指令：四字向量操作数执行运算，并生成双字向量结果，所生成的元素一般是操作数元素宽度的一半。N标记，如VMOVN。  </li>
+<li>饱和指令：当超过数据类型指定到范围则自动限制在该范围内。Q标记，如VQSHRUN  </li>
+</ul>
+</blockquote>
+<p>NEON指令按照作用可以分为：加载数据、存储数据、加减乘除运算、逻辑AND/OR/XOR运算、比较大小运算等，具体信息参考资料[1]中附录C和附录D部分。  </p>
+<p>常用的指令集包括：</p>
+<ul>
+<li>初始化寄存器<br>寄存器的每个lane（通道）都赋值为一个值N<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Result_t <span class="title">vcreate_type</span><span class="params">(Scalar_t N)</span></span></span><br><span class="line"><span class="function">Result_t <span class="title">vdup_type</span><span class="params">(Scalar_t N)</span></span></span><br><span class="line"><span class="function">Result_t <span class="title">vmov_type</span><span class="params">(Scalar_t N)</span></span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<blockquote>
+<p>lane（通道）在下面有说明。</p>
+</blockquote>
+<ul>
+<li>加载内存数据进寄存器<br>间隔为x，加载数据进NEON寄存器<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Result_t vld[x]_type(Scalar_t* N)</span><br><span class="line">Result_t vld[x]q_type(Scalar_t* N)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>间隔为x，加载数据进NEON寄存器的相关lane（通道），其他lane（通道）的数据不改变<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Result_t vld[x]_lane_type(Scalar_t* N,Vector_t M,<span class="keyword">int</span> n)</span><br><span class="line">Result_t vld[x]q_lane_type(Scalar_t* N,Vector_t M,<span class="keyword">int</span> n)</span><br></pre></td></tr></table></figure></p>
+<p>从N中加载x条数据，分别duplicate（复制）数据到寄存器0-(x-1)的所有通道<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Result_t vld[x]_dup_type(Scalar_t* N)</span><br><span class="line">Result_t vld[x]q_dup_type(Scalar_t* N)</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<ul>
+<li>lane（通道）：比如一个float32x4_t的NEON寄存器，它具有4个lane（通道），每个lane（通道）有一个float32的值，因此 <figure class="highlight c++"><figcaption><span>float32x4_t dst </span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&gt; * 间隔：交叉存取，是ARM NEON特有的指令，比如 ```c++ <span class="keyword">float32x4x3_t</span> = vld3q_f32(<span class="keyword">float32_t</span>* ptr) ``` ，此处间隔为<span class="number">3</span>，即交叉读取<span class="number">12</span>个float32进<span class="number">3</span>个NEON寄存器中。<span class="number">3</span>个寄存器的值分别为：&#123;ptr[<span class="number">0</span>],ptr[<span class="number">3</span>],ptr[<span class="number">6</span>],ptr[<span class="number">9</span>]&#125;，&#123;ptr[<span class="number">1</span>],ptr[<span class="number">4</span>],ptr[<span class="number">7</span>],ptr[<span class="number">10</span>]&#125;，&#123;ptr[<span class="number">2</span>],ptr[<span class="number">5</span>],ptr[<span class="number">8</span>],ptr[<span class="number">11</span>]&#125;。</span><br><span class="line"></span><br><span class="line">* 存储寄存器数据到内存  </span><br><span class="line">间隔为x，存储NEON寄存器的数据到内存中</span><br><span class="line">```c++</span><br><span class="line"><span class="keyword">void</span> vstx_type(Scalar_t* N)</span><br><span class="line"><span class="keyword">void</span> vstxq_type(Scalar_t* N)</span><br></pre></td></tr></table></figure></li>
+</ul>
+</blockquote>
+<p>间隔为x，存储NEON寄存器的相关lane（通道）到内存中<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Result_t vst[x]_lane_type(Scalar_t* N,Vector_t M,<span class="keyword">int</span> n)</span><br><span class="line">Result_t vst[x]q_lane_type(Scalar_t* N,Vector_t M,<span class="keyword">int</span> n)</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>读取/修改寄存器数据<br>读取寄存器第n个通道的数据<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Result_t <span class="title">vget_lane_type</span><span class="params">(Vector_t M,<span class="keyword">int</span> n)</span></span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>读取寄存器的高/低部分到新的寄存器中，数据变窄（长度减半）。<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Result_t <span class="title">vget_low_type</span><span class="params">(Vector_t M)</span></span></span><br><span class="line"><span class="function">Result_t <span class="title">vget_high_type</span><span class="params">(Vector_t M)</span></span></span><br></pre></td></tr></table></figure></p>
+<p>返回在复制M的基础上设置通道n为N的寄存器数据<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Result_t <span class="title">vset_lane_type</span><span class="params">(Scalar N,Vector_t M,<span class="keyword">int</span> n)</span></span></span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>寄存器数据重排<br>从寄存器M中取出后n个通道的数据置于低位，再从寄存器N中取出x-n个通道的数据置于高位，组成一个新的寄存器数据。<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Result_t <span class="title">vext_type</span><span class="params">(Vector_t N,Vector_t M,<span class="keyword">int</span> n)</span></span></span><br><span class="line"><span class="function">Result_t <span class="title">vextq_type</span><span class="params">(Vector_t N,Vector_t M,<span class="keyword">int</span> n)</span></span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>其他数据重排指令还有：</p>
+<blockquote>
+<p>vtbl_tyoe,vrev_type,vtrn_type,vzip_type,vunzip_type,vcombine …<br>等以后有时间一一讲解。</p>
+</blockquote>
+<ul>
+<li><p>类型转换指令<br>强制重新解释寄存器的值类型，从SrcType转化为DstType，其内部实际值不变且总的字节数不变，举例：vreinterpret_f32_s32(int32x2_t)，从int32x2_t转化为float32x2_t。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vreinterpret_DstType_SrcType(Vector_t N)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>算数运算指令<br>[普通指令] 普通加法运算 res = M+N</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Result_t <span class="title">vadd_type</span><span class="params">(Vector_t M,Vector_t N)</span></span></span><br><span class="line"><span class="function">Result_t <span class="title">vaddq_type</span><span class="params">(Vector_t M,Vector_t N)</span></span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>[长指令] 变长加法运算 res = M+N，为了防止溢出，一种做法是使用如下指令，加法结果存储到长度x2的寄存器中，如：vuint16x8_t res = vaddl_u8(uint8x8_t M,uint8x8_t N)。<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Result_t <span class="title">vaddl_type</span><span class="params">(Vector_t M,Vector_t N)</span></span></span><br></pre></td></tr></table></figure></p>
+<p>[宽指令] 加法运算 res = M+N，第一个参数M宽度大于第二个参数N。<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Result_t <span class="title">vaddw_type</span><span class="params">(Vector_t M,Vector_t N)</span></span></span><br></pre></td></tr></table></figure></p>
+<p>[普通指令] 加法运算 res = trunct(M+N)（溢出则截断）之后向右平移1位，即计算M和N的平均值<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Result_t <span class="title">vhadd_type</span><span class="params">(Vector_t M,Vector_t N)</span></span></span><br></pre></td></tr></table></figure></p>
+<p>[普通指令] 加法运算 res = round(M+N)（溢出则循环）之后向右平移1位，即计算M和N的平均值<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Result_t <span class="title">vrhadd_type</span><span class="params">(Vector_t M,Vector_t N)</span></span></span><br></pre></td></tr></table></figure></p>
+<p>[饱和指令] 饱和加法运算 res = st(M+N)，如：vuint8x8_t res = vqadd_u8(uint8x8_t M,uint8x8_t N)，res超出int8_t的表示范围（0，255），比如256，则设为255.<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Result_t <span class="title">vqadd_type</span><span class="params">(Vector_t M,Vector_t N)</span></span></span><br></pre></td></tr></table></figure></p>
+<p>[窄指令] 加法运算 res = M+N，结果比参数M/N的长度小一半，如 uint8x8_t res = vaddhn_u16(uint16x8_t M,uint16x8_t N)<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Result_t <span class="title">vaddhn_type</span><span class="params">(Vector_t M,Vector_t N)</span></span></span><br></pre></td></tr></table></figure></p>
+<p>[普通指令] 减法运算 res = M-N<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Result_t <span class="title">vsub_type</span><span class="params">(Vector_t M,Vector_t N)</span></span></span><br></pre></td></tr></table></figure></p>
+<p>[普通指令] 乘法运算 res = M*N<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Result_t <span class="title">vmul_type</span><span class="params">(Vector_t M,Vector_t N)</span></span></span><br><span class="line"><span class="function">Result_t <span class="title">vmulq_type</span><span class="params">(Vector_t M,Vector_t N)</span></span></span><br></pre></td></tr></table></figure></p>
+<p>[普通指令] 乘&amp;加法运算 res = M+N*P<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Result_t <span class="title">vmla_type</span><span class="params">(Vector_t M,Vector_t N,Vector_t P)</span></span></span><br><span class="line"><span class="function">Result_t <span class="title">vmlaq_type</span><span class="params">(Vector_t M,Vector_t N,Vector_t P)</span></span></span><br></pre></td></tr></table></figure></p>
+<p>[普通指令] 乘&amp;减法运算 res = M-N*P<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Result_t <span class="title">vmls_type</span><span class="params">(Vector_t M,Vector_t N,Vector_t P)</span></span></span><br><span class="line"><span class="function">Result_t <span class="title">vmlsq_type</span><span class="params">(Vector_t M,Vector_t N,Vector_t P)</span></span></span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>类似加法运算，减法和乘法运算也有一系列变种…</p>
+</blockquote>
+<ul>
+<li>数据处理指令<br>[普通指令] 计算绝对值 res=abs(M)<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Result_t <span class="title">vabs_type</span><span class="params">(Vector_t M)</span></span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>[普通指令] 计算负值 res=-M<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Result_t <span class="title">vneg_type</span><span class="params">(Vector_t M)</span></span></span><br></pre></td></tr></table></figure></p>
+<p>[普通指令] 计算最大值 res=max(M,N)<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Result_t <span class="title">vmax_type</span><span class="params">(Vector_t M,Vector_t N)</span></span></span><br></pre></td></tr></table></figure></p>
+<p>[普通指令] 计算最小值 res=min(M,N)<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Result_t <span class="title">vmin_type</span><span class="params">(Vector_t M,Vector_t N)</span></span></span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>…</p>
+</blockquote>
+<ul>
+<li>比较指令<br>[普通指令] 比较是否相等 res=mask(M == N)<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Result_t <span class="title">vceg_type</span><span class="params">(Vector_t M,Vector_t N)</span></span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>[普通指令] 比较是否大于或等于 res=mask(M &gt;= N)<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Result_t <span class="title">vcge_type</span><span class="params">(Vector_t M,Vector_t N)</span></span></span><br></pre></td></tr></table></figure></p>
+<p>[普通指令] 比较是否大于 res=mask(M &gt; N)<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Result_t <span class="title">vcgt_type</span><span class="params">(Vector_t M,Vector_t N)</span></span></span><br></pre></td></tr></table></figure></p>
+<p>[普通指令] 比较是否小于或等于 res=mask(M &lt;= N)<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Result_t <span class="title">vcle_type</span><span class="params">(Vector_t M,Vector_t N)</span></span></span><br></pre></td></tr></table></figure></p>
+<p>[普通指令] 比较是否小于 res=mask(M &lt; N)<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Result_t <span class="title">vclt_type</span><span class="params">(Vector_t M,Vector_t N)</span></span></span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>…</p>
+</blockquote>
+<ul>
+<li>归约指令<br>[普通指令] 归约加法，M和N内部的元素各自相加，最后组成一个新的结果<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Result_t <span class="title">vpadd_type</span><span class="params">(Vector_t M,Vector_t N)</span></span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>[普通指令] 归约最大比较，M和N内部的元素比较得出最大值，最后组成一个新的结果<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Result_t <span class="title">vpmax_type</span><span class="params">(Vector_t M,Vector_t N)</span></span></span><br></pre></td></tr></table></figure></p>
+<p>[普通指令] 归约最小比较，M和N内部的元素比较得出最小值，最后组成一个新的结果<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Result_t <span class="title">vpmin_type</span><span class="params">(Vector_t M,Vector_t N)</span></span></span><br></pre></td></tr></table></figure></p>
+<p>…</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="http://pan.baidu.com/s/1c14agog" title="DEN0018A_neon_programmers_guide" target="_blank" rel="noopener">DEN0018A_neon_programmers_guide</a></li>
+<li><a href="http://pan.baidu.com/s/1qXYdMOW,&quot;DDI0487A_f_armv8_arm&quot;" target="_blank" rel="noopener">DDI0487A_f_armv8_arm</a></li>
+<li><a href="http://pan.baidu.com/s/1jIPcMSe" title="DEN0013D_cortex_a_series_PG" target="_blank" rel="noopener">DEN0013D_cortex_a_series_PG</a></li>
+<li><a href="https://community.arm.com/groups/processors/blog/2010/03/17/coding-for-neon--part-1-load-and-stores" title="Coding for NEON - Part 1: Load and Stores" target="_blank" rel="noopener">Coding for NEON - Part 1: Load and Stores</a></li>
+<li><a href="https://community.arm.com/groups/processors/blog/2010/05/10/coding-for-neon--part-2-dealing-with-leftovers" title="Coding for NEON - Part 2: Dealing With Leftovers" target="_blank" rel="noopener">Coding for NEON - Part 2: Dealing With Leftovers</a></li>
+<li><a href="https://community.arm.com/groups/processors/blog/2010/06/28/coding-for-neon--part-3-matrix-multiplication" title="Coding for NEON - Part 3: Matrix Multiplication" target="_blank" rel="noopener">Coding for NEON - Part 3: Matrix Multiplication</a></li>
+<li><a href="https://community.arm.com/groups/processors/blog/2010/09/01/coding-for-neon--part-4-shifting-left-and-right" title="Coding for NEON - Part 4: Shifting Left and Right" target="_blank" rel="noopener">Coding for NEON - Part 4: Shifting Left and Right</a></li>
+<li><a href="https://community.arm.com/groups/processors/blog/2012/03/13/coding-for-neon--part-5-rearranging-vectors" title="Coding for NEON - Part 5: Rearranging Vectors" target="_blank" rel="noopener">Coding for NEON - Part 5: Rearranging Vectors</a></li>
+</ol>
+
+      
+    </div>
+    
+    
+    
+
+    
+      <div>
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/about/qrcode.jpg" alt="洪柏敏 wechat" style="width: 200px; max-width: 100%;">
+    <div>欢迎留言评论，邮件给我(dahanhbm AT gmail DOT com)，或者关注我的微信公众号</div>
+</div>
+
+      </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/arm/" rel="tag"># arm</a>
+          
+            <a href="/tags/neon/" rel="tag"># neon</a>
+          
+            <a href="/tags/性能优化/" rel="tag"># 性能优化</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/05/13/arm_neon_introduction/" rel="next" title="ARM NEON 编程系列1 - 导论">
+                <i class="fa fa-chevron-left"></i> ARM NEON 编程系列1 - 导论
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/06/04/coding-for-neon-part1-load-and-stores/" rel="prev" title="[翻译]NEON编程1-数据加载与存储">
+                [翻译]NEON编程1-数据加载与存储 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      
+        <div id="gitment-container"></div>
+      
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">洪柏敏</p>
+              <p class="site-description motion-element" itemprop="description">个人网站，学习思考总结</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">46</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">25</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">70</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/xylcbd" target="_blank" title="GitHub">
+                    
+                      <i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/xing-ye-luo-chen" target="_blank" title="ZhiHu">
+                    
+                      <i class="fa fa-fw fa-zhihu"></i>ZhiHu</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:dahanhbm@gmail.com" target="_blank" title="E-Mail">
+                    
+                      <i class="fa fa-fw fa-gmail"></i>E-Mail</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NEON指令集"><span class="nav-number">2.</span> <span class="nav-text">NEON指令集</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#寄存器"><span class="nav-number">3.</span> <span class="nav-text">寄存器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基本数据类型"><span class="nav-number">4.</span> <span class="nav-text">基本数据类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结构化数据类型"><span class="nav-number">5.</span> <span class="nav-text">结构化数据类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基本指令集"><span class="nav-number">6.</span> <span class="nav-text">基本指令集</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考"><span class="nav-number">7.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">洪柏敏</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+<!-- LOCAL: You can save these files to your site and update links -->
+    
+        
+        <link rel="stylesheet" href="https://aimingoo.github.io/gitmint/style/default.css">
+        <script src="https://aimingoo.github.io/gitmint/dist/gitmint.browser.js"></script>
+    
+<!-- END LOCAL -->
+
+    
+
+    
+      <script type="text/javascript">
+      function renderGitment(){
+        var gitment = new Gitmint({
+            id: window.location.pathname, 
+            owner: 'xylcbd',
+            repo: 'gitment-comments',
+            
+            lang: "" || navigator.language || navigator.systemLanguage || navigator.userLanguage,
+            
+            oauth: {
+            
+            
+                client_secret: '6206a9e33b41c30b642d93033256b456fd1d528a',
+            
+                client_id: '524a666634fb71b2f83a'
+            }});
+        gitment.render('gitment-container');
+      }
+
+      
+      renderGitment();
+      
+      </script>
+    
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("a36Qsdl9bxSSSq9Vt28ngRkk-gzGzoHsz", "gBUBOqu5qkDbk84fVTUUNdpS");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

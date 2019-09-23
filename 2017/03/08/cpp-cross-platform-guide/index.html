@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="c++,跨平台,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="竹杖芒鞋轻胜马，一蓑烟雨任平生" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="C++跨平台C++跨平台是指同一份代码可以不加修改的在不同的平台上编译运行且表现一致。所谓不同的平台包括：  不同的操作系统 不同的CPU 不同的语言集 etc.  平台移植性从c++代码到程序最终运行需要经过下面步骤，每个步骤都需要考虑平台移植性：  编译 主要是代码的可移植性   链接 主要是第三方库的可移植性   运行 主要是系统运行时的可移植性    目标运行系统一般我们需要支持的系统可能">
+<meta name="keywords" content="c++,跨平台">
+<meta property="og:type" content="article">
+<meta property="og:title" content="c++跨平台移植指南">
+<meta property="og:url" content="http://hongbomin.com/2017/03/08/cpp-cross-platform-guide/index.html">
+<meta property="og:site_name" content="竹杖芒鞋轻胜马，一蓑烟雨任平生">
+<meta property="og:description" content="C++跨平台C++跨平台是指同一份代码可以不加修改的在不同的平台上编译运行且表现一致。所谓不同的平台包括：  不同的操作系统 不同的CPU 不同的语言集 etc.  平台移植性从c++代码到程序最终运行需要经过下面步骤，每个步骤都需要考虑平台移植性：  编译 主要是代码的可移植性   链接 主要是第三方库的可移植性   运行 主要是系统运行时的可移植性    目标运行系统一般我们需要支持的系统可能">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://hongbomin.com/2017/03/08/cpp-cross-platform-guide/os_detect_macro.png">
+<meta property="og:image" content="http://hongbomin.com/2017/03/08/cpp-cross-platform-guide/compiler_detect_macro.png">
+<meta property="og:image" content="http://hongbomin.com/2017/03/08/cpp-cross-platform-guide/cpu_detect_macro.png">
+<meta property="og:image" content="http://hongbomin.com/2017/03/08/cpp-cross-platform-guide/signed_unsigned_issue.png">
+<meta property="og:updated_time" content="2019-09-23T07:01:34.158Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="c++跨平台移植指南">
+<meta name="twitter:description" content="C++跨平台C++跨平台是指同一份代码可以不加修改的在不同的平台上编译运行且表现一致。所谓不同的平台包括：  不同的操作系统 不同的CPU 不同的语言集 etc.  平台移植性从c++代码到程序最终运行需要经过下面步骤，每个步骤都需要考虑平台移植性：  编译 主要是代码的可移植性   链接 主要是第三方库的可移植性   运行 主要是系统运行时的可移植性    目标运行系统一般我们需要支持的系统可能">
+<meta name="twitter:image" content="http://hongbomin.com/2017/03/08/cpp-cross-platform-guide/os_detect_macro.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://hongbomin.com/2017/03/08/cpp-cross-platform-guide/">
+
+
+
+
+
+  <title>c++跨平台移植指南 | 竹杖芒鞋轻胜马，一蓑烟雨任平生</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?23a58b060800f89fe2c9907f73bc0fdf";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">竹杖芒鞋轻胜马，一蓑烟雨任平生</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">don't worry,be happy.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://hongbomin.com/2017/03/08/cpp-cross-platform-guide/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="洪柏敏">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="竹杖芒鞋轻胜马，一蓑烟雨任平生">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">c++跨平台移植指南</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-08T22:19:03+08:00">
+                2017-03-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/c/" itemprop="url" rel="index">
+                    <span itemprop="name">c++</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/03/08/cpp-cross-platform-guide/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count gitment-comments-count" data-xid="/2017/03/08/cpp-cross-platform-guide/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2017/03/08/cpp-cross-platform-guide/" class="leancloud_visitors" data-flag-title="c++跨平台移植指南">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="C-跨平台"><a href="#C-跨平台" class="headerlink" title="C++跨平台"></a>C++跨平台</h2><p>C++跨平台是指同一份代码可以不加修改的在不同的平台上编译运行且表现一致。<br>所谓不同的平台包括：</p>
+<ul>
+<li>不同的操作系统</li>
+<li>不同的CPU</li>
+<li>不同的语言集</li>
+<li>etc.</li>
+</ul>
+<h2 id="平台移植性"><a href="#平台移植性" class="headerlink" title="平台移植性"></a>平台移植性</h2><p>从c++代码到程序最终运行需要经过下面步骤，每个步骤都需要考虑平台移植性：</p>
+<ul>
+<li>编译<blockquote>
+<p>主要是代码的可移植性</p>
+</blockquote>
+</li>
+<li>链接<blockquote>
+<p>主要是第三方库的可移植性</p>
+</blockquote>
+</li>
+<li>运行<blockquote>
+<p>主要是系统运行时的可移植性</p>
+</blockquote>
+</li>
+</ul>
+<h2 id="目标运行系统"><a href="#目标运行系统" class="headerlink" title="目标运行系统"></a>目标运行系统</h2><p>一般我们需要支持的系统可能有：Windows、linux、iOS、Android。其中各个系统又有自己的不同版本，如Windows有win XP，vista，win7，win8，win10等，这些版本差异对于标准c++程序来说基本无关紧要。但是对于使用到系统API的程序，需要注意API的说明，包括是否废弃、是否兼容等。</p>
+<h2 id="目标CPU"><a href="#目标CPU" class="headerlink" title="目标CPU"></a>目标CPU</h2><p>一般我们需要支持的CPU可能有：X86，X86-64，arm，arm64。不同CPU可能有一些差异，如字长，大小端等。同时，如果需要用到CPU专用的指令，不同的CPU也有不同的指令集，如x86、x86-64系列的MMX、SSE指令，arm、arm64系列的Neon指令等。</p>
+<h2 id="编译器"><a href="#编译器" class="headerlink" title="编译器"></a>编译器</h2><p>常用编译器包括：gcc，clang，msvc等。编译器与目标系统并非绑定，可以通过交叉编译的方式编译其他平台的可执行程序。编译器在不同优化等级下，程序行为可能会不一致，如msvc在debug模式下会插入很多边界检测代码、申请的变量自动清零等（更多参考：Debug与Release版本的区别）。注意代码不能依赖优化等级。编译器对于c++标准的接口一致，内部实现可能各有千秋，如在4.9.0之前的gcc中定义了regex，但是并未实现。而对于未定义行为，不同编译器可能表现不一致，因此尽量避免未定义行为。</p>
+<h2 id="平台检测"><a href="#平台检测" class="headerlink" title="平台检测"></a>平台检测</h2><p>有些情况下不得不使用非标准c++的时候，同样可以编写跨平台的代码。这时候需要定义统一的接口，然后在不同的平台下做不同的实现。<br>这时候就需要做平台检测，一般可通过系统或者编译器预定义的宏做检测。</p>
+<ul>
+<li><p>操作系统检测<br><img src="/2017/03/08/cpp-cross-platform-guide/os_detect_macro.png" alt=""></p>
+</li>
+<li><p>编译器检测<br><img src="/2017/03/08/cpp-cross-platform-guide/compiler_detect_macro.png" alt=""></p>
+</li>
+<li><p>CPU检测<br><img src="/2017/03/08/cpp-cross-platform-guide/cpu_detect_macro.png" alt=""></p>
+</li>
+</ul>
+<h2 id="c-标准"><a href="#c-标准" class="headerlink" title="c++标准"></a>c++标准</h2><p>c++标准包括：C++ 98, c++03, c++11, c++14, c++17，中间还有若干修订版本。更多参考：<a href="http://www.cplusplus.com/info/history/" target="_blank" rel="noopener">history of c++</a>。<br>基本上c++03以及之前的标准（c++0x），目前大部分编译器版本都能支持。c++11以及之后的标准（c++1y），gcc4.8, vc++2013, clang++3.3以及之后的版本都在不同程度上支持c++1y。</p>
+<h2 id="异常处理"><a href="#异常处理" class="headerlink" title="异常处理"></a>异常处理</h2><p>在使用c++异常处理时一般配合RAII ，以防止资源泄漏。c++异常不能处理类似内存访问越界、除零错误等底层错误。Android平台，NDK编译时可以选择是否启用c++异常。<br>除了标准c++中的异常之外，还有一些平台相关的异常，如windows下的结构化异常处理（SEH），这种异常处理功能比较强大，能捕捉更多的异常，但是并不通用，写跨平台代码时候尽量少用。</p>
+<h2 id="换行"><a href="#换行" class="headerlink" title="换行"></a>换行</h2><p>在windows中换行是”\r\n”，而在xnix环境中换行是”\n”，mac中换行是”\r”。在处理文本文件的时候需要注意换行的问题。</p>
+<h2 id="路径分隔符"><a href="#路径分隔符" class="headerlink" title="路径分隔符"></a>路径分隔符</h2><p>在windows中路径分隔符是”\”，而在xnix环境中换行是”/”。在处理路径的时候需要注意分隔符的问题。</p>
+<h2 id="数据对齐"><a href="#数据对齐" class="headerlink" title="数据对齐"></a>数据对齐</h2><p>结构体在不同的平台下对齐方式可能不一致，因此除非在结构体前后声明：</p>
+<p>#pragma pack(push,1)</p>
+<p>#pragma pack(pop)</p>
+<p>否则，不推荐声明一个结构体变量，然后直接从文件中map到结构体这种方式来读取。</p>
+<h2 id="数据类型"><a href="#数据类型" class="headerlink" title="数据类型"></a>数据类型</h2><p>c++标准中只规定了数据类型的最小bits，在不同系统/CPU/编译器环境下bit位数可能不一样。<br>如：<br>int：规定最少为16bit，16位机器上是16bit，32位&amp;64位机器一般实现为32bit。<br>long：在windows msvc下，32位&amp;64位系统都为32bit，而在linux gcc 64位系统下为64bit。<br>wchar_t：在windows msvc下是16bit，而在linux下是32bit。<br>char：char是否为signed并不是固定的，在部分平台下char是unsigned char，如Android 64bit系统。<br>size_t：size_t不同平台具有不同大小。</p>
+<h2 id="char-signed-or-unsigned"><a href="#char-signed-or-unsigned" class="headerlink" title="char signed or unsigned ?"></a>char signed or unsigned ?</h2><p>下面的代码可能会出问题。其中，MAX=10, EOF=-1。<br><img src="/2017/03/08/cpp-cross-platform-guide/signed_unsigned_issue.png" alt=""></p>
+<h2 id="数据类型-1"><a href="#数据类型-1" class="headerlink" title="数据类型"></a>数据类型</h2><p>目前c++中可以使用<cstdint>中定义的数据类型，包括：uint8_t，int8_t，uint32_t，int32_t等，这些数据类型在不同平台和编译器下均保持一致。在定义数据结构或者二进制文件时，使用<cstdint>中的数据类型可减少数据类型不一致的问题。<br>此外，不要使用平台自定义的数据类型，如windows SDK下定义了很多数据类型：FLOAT，LONG，CHAR，DWORD，LONG_PTR，INT_PTR等。</cstdint></cstdint></p>
+<h2 id="字符编码"><a href="#字符编码" class="headerlink" title="字符编码"></a>字符编码</h2><p>目前常接触到的字符编码包括：ANSI（中文系统下即为gbk/gb2312等）、UTF-8、UTF-16。<br>windows下默认使用ANSI，其他系统下默认使用UTF-8。<br>在定义二进制文件时一般采用UTF-16，因为UTF-16是定长编码（UCS-2编码每个字符16bit，UCS-4编码时每个字符32bit，一般使用UCS-2），比较方便处理。</p>
+<h2 id="函数符号"><a href="#函数符号" class="headerlink" title="函数符号"></a>函数符号</h2><p>函数符号是指编译器标记函数的一种助记符，用做目标文件的链接。<br>一般在实际工程中，以下几点：</p>
+<ul>
+<li>跨语言调用<blockquote>
+<p>跨语言调用是指类似python，php调用c/c++实现的功能（一般很少反向调用）。跨语言调用一般通过导出c风格的函数，或者通过类似boost.python。推荐前一种方式。</p>
+</blockquote>
+</li>
+<li>隐藏实现细节<blockquote>
+<p>文件内函数&amp;变量使用static前缀<br>gcc/clang设置CFLAGS = -ffunction-sections -fdata-sections -fvisibility=hidden LDFLAGS += -Wl,–gc-sections，需要导出的函数添加前缀：<strong>attribute</strong>((visibility(“default”)))<br>msvc在导出函数之前添加前缀：__declspec(dllexport)</p>
+</blockquote>
+</li>
+</ul>
+<h2 id="内存管理"><a href="#内存管理" class="headerlink" title="内存管理"></a>内存管理</h2><p>在导出接口时，内存管理遵循谁申请谁释放的原则，一般提供接口来释放内存。<br>不要在跨模块调用时直接调用free或者delete释放，这很可能在部分平台下发生crash。</p>
+<h2 id="第三方库"><a href="#第三方库" class="headerlink" title="第三方库"></a>第三方库</h2><ul>
+<li>可移植性<br>程序当中有时候需要一些额外的第三方库，如Json解析等。在选择第三方库的时候，也需要注意可移植性问题，一般在项目说明或者Issue中会有是否具备可移植性的解释。</li>
+<li>轻量<br>第三方库一般建议选择轻量级的库，编译和修改都会比较方便。</li>
+</ul>
+<hr>
+<p>c++由于相对比较底层，因此跨平台开发比较考验对体系结构、编译器、C++语法的理解，多踩坑才能多进步。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+      <div>
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/about/qrcode.jpg" alt="洪柏敏 wechat" style="width: 200px; max-width: 100%;">
+    <div>欢迎留言评论，邮件给我(dahanhbm AT gmail DOT com)，或者关注我的微信公众号</div>
+</div>
+
+      </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/c/" rel="tag"># c++</a>
+          
+            <a href="/tags/跨平台/" rel="tag"># 跨平台</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/08/using-chrome-as-markdown-editor/" rel="next" title="使用chrome浏览器作为Markdown写作工具">
+                <i class="fa fa-chevron-left"></i> 使用chrome浏览器作为Markdown写作工具
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/10/using-visual-studio-as-linux-develop-IDE/" rel="prev" title="使用Visual Studio 2017作为Linux C++开发工具">
+                使用Visual Studio 2017作为Linux C++开发工具 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      
+        <div id="gitment-container"></div>
+      
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">洪柏敏</p>
+              <p class="site-description motion-element" itemprop="description">个人网站，学习思考总结</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">46</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">25</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">70</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/xylcbd" target="_blank" title="GitHub">
+                    
+                      <i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/xing-ye-luo-chen" target="_blank" title="ZhiHu">
+                    
+                      <i class="fa fa-fw fa-zhihu"></i>ZhiHu</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:dahanhbm@gmail.com" target="_blank" title="E-Mail">
+                    
+                      <i class="fa fa-fw fa-gmail"></i>E-Mail</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#C-跨平台"><span class="nav-number">1.</span> <span class="nav-text">C++跨平台</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#平台移植性"><span class="nav-number">2.</span> <span class="nav-text">平台移植性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#目标运行系统"><span class="nav-number">3.</span> <span class="nav-text">目标运行系统</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#目标CPU"><span class="nav-number">4.</span> <span class="nav-text">目标CPU</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#编译器"><span class="nav-number">5.</span> <span class="nav-text">编译器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#平台检测"><span class="nav-number">6.</span> <span class="nav-text">平台检测</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#c-标准"><span class="nav-number">7.</span> <span class="nav-text">c++标准</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#异常处理"><span class="nav-number">8.</span> <span class="nav-text">异常处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#换行"><span class="nav-number">9.</span> <span class="nav-text">换行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#路径分隔符"><span class="nav-number">10.</span> <span class="nav-text">路径分隔符</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据对齐"><span class="nav-number">11.</span> <span class="nav-text">数据对齐</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据类型"><span class="nav-number">12.</span> <span class="nav-text">数据类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#char-signed-or-unsigned"><span class="nav-number">13.</span> <span class="nav-text">char signed or unsigned ?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据类型-1"><span class="nav-number">14.</span> <span class="nav-text">数据类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#字符编码"><span class="nav-number">15.</span> <span class="nav-text">字符编码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#函数符号"><span class="nav-number">16.</span> <span class="nav-text">函数符号</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内存管理"><span class="nav-number">17.</span> <span class="nav-text">内存管理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第三方库"><span class="nav-number">18.</span> <span class="nav-text">第三方库</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">洪柏敏</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+<!-- LOCAL: You can save these files to your site and update links -->
+    
+        
+        <link rel="stylesheet" href="https://aimingoo.github.io/gitmint/style/default.css">
+        <script src="https://aimingoo.github.io/gitmint/dist/gitmint.browser.js"></script>
+    
+<!-- END LOCAL -->
+
+    
+
+    
+      <script type="text/javascript">
+      function renderGitment(){
+        var gitment = new Gitmint({
+            id: window.location.pathname, 
+            owner: 'xylcbd',
+            repo: 'gitment-comments',
+            
+            lang: "" || navigator.language || navigator.systemLanguage || navigator.userLanguage,
+            
+            oauth: {
+            
+            
+                client_secret: '6206a9e33b41c30b642d93033256b456fd1d528a',
+            
+                client_id: '524a666634fb71b2f83a'
+            }});
+        gitment.render('gitment-container');
+      }
+
+      
+      renderGitment();
+      
+      </script>
+    
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("a36Qsdl9bxSSSq9Vt28ngRkk-gzGzoHsz", "gBUBOqu5qkDbk84fVTUUNdpS");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
