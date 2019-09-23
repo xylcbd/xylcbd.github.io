@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://hongbomin.com/2019/09/23/detect-oov-in-font/</loc>
+    
+    <lastmod>2019-09-23T07:35:48.746Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://hongbomin.com/2019/09/23/how-to-optimize-ubuntu-ui/</loc>
     
     <lastmod>2019-09-23T07:22:46.466Z</lastmod>
@@ -58,14 +65,14 @@
   </url>
   
   <url>
-    <loc>http://hongbomin.com/2017/06/27/usually-command-on-linux/</loc>
+    <loc>http://hongbomin.com/2017/11/28/visual-studio-debugging-skills/</loc>
     
     <lastmod>2019-09-23T07:01:34.233Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://hongbomin.com/2017/11/28/visual-studio-debugging-skills/</loc>
+    <loc>http://hongbomin.com/2017/06/27/usually-command-on-linux/</loc>
     
     <lastmod>2019-09-23T07:01:34.233Z</lastmod>
     
@@ -86,7 +93,21 @@
   </url>
   
   <url>
+    <loc>http://hongbomin.com/2017/06/27/tensorflow-mnist-multi-gpu/</loc>
+    
+    <lastmod>2019-09-23T07:01:34.219Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://hongbomin.com/2017/06/24/tensorflow-to-easycnn/</loc>
+    
+    <lastmod>2019-09-23T07:01:34.219Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://hongbomin.com/2017/12/23/tensorflow-multitask-multilabel/</loc>
     
     <lastmod>2019-09-23T07:01:34.219Z</lastmod>
     
@@ -107,20 +128,6 @@
   </url>
   
   <url>
-    <loc>http://hongbomin.com/2017/12/23/tensorflow-multitask-multilabel/</loc>
-    
-    <lastmod>2019-09-23T07:01:34.219Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://hongbomin.com/2017/06/27/tensorflow-mnist-multi-gpu/</loc>
-    
-    <lastmod>2019-09-23T07:01:34.219Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://hongbomin.com/2017/03/08/using-chrome-as-markdown-editor/</loc>
     
     <lastmod>2019-09-23T07:01:34.219Z</lastmod>
@@ -135,7 +142,14 @@
   </url>
   
   <url>
-    <loc>http://hongbomin.com/2016/11/11/proxy-for-commandline/</loc>
+    <loc>http://hongbomin.com/2018/03/15/pytorch_notes/</loc>
+    
+    <lastmod>2019-09-23T07:01:34.203Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://hongbomin.com/2016/11/09/securiity-of-software/</loc>
     
     <lastmod>2019-09-23T07:01:34.203Z</lastmod>
     
@@ -156,14 +170,7 @@
   </url>
   
   <url>
-    <loc>http://hongbomin.com/2018/03/15/pytorch_notes/</loc>
-    
-    <lastmod>2019-09-23T07:01:34.203Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://hongbomin.com/2016/11/09/securiity-of-software/</loc>
+    <loc>http://hongbomin.com/2016/11/11/proxy-for-commandline/</loc>
     
     <lastmod>2019-09-23T07:01:34.203Z</lastmod>
     
@@ -177,14 +184,14 @@
   </url>
   
   <url>
-    <loc>http://hongbomin.com/2016/06/07/programmer-requisite-skills/</loc>
+    <loc>http://hongbomin.com/2017/12/31/plan-of-the-2017-to-2018/</loc>
     
     <lastmod>2019-09-23T07:01:34.202Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://hongbomin.com/2017/12/31/plan-of-the-2017-to-2018/</loc>
+    <loc>http://hongbomin.com/2016/06/07/programmer-requisite-skills/</loc>
     
     <lastmod>2019-09-23T07:01:34.202Z</lastmod>
     
@@ -198,14 +205,14 @@
   </url>
   
   <url>
-    <loc>http://hongbomin.com/2017/09/02/ncnn-analysis/</loc>
+    <loc>http://hongbomin.com/2018/11/28/mac-software/</loc>
     
     <lastmod>2019-09-23T07:01:34.200Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://hongbomin.com/2018/11/28/mac-software/</loc>
+    <loc>http://hongbomin.com/2017/09/02/ncnn-analysis/</loc>
     
     <lastmod>2019-09-23T07:01:34.200Z</lastmod>
     
@@ -219,14 +226,14 @@
   </url>
   
   <url>
-    <loc>http://hongbomin.com/2016/06/24/how-to-hide-symbols-of-c-functions/</loc>
+    <loc>http://hongbomin.com/2017/03/19/image-process/</loc>
     
     <lastmod>2019-09-23T07:01:34.169Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://hongbomin.com/2017/03/19/image-process/</loc>
+    <loc>http://hongbomin.com/2016/06/24/how-to-hide-symbols-of-c-functions/</loc>
     
     <lastmod>2019-09-23T07:01:34.169Z</lastmod>
     
@@ -261,13 +268,6 @@
   </url>
   
   <url>
-    <loc>http://hongbomin.com/2016/11/12/easycnn-design-history/</loc>
-    
-    <lastmod>2019-09-23T07:01:34.166Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://hongbomin.com/2016/07/19/fast-matrix-multiplication/</loc>
     
     <lastmod>2019-09-23T07:01:34.166Z</lastmod>
@@ -275,14 +275,21 @@
   </url>
   
   <url>
-    <loc>http://hongbomin.com/2017/12/06/dealing-with-complex-thing/</loc>
+    <loc>http://hongbomin.com/2016/11/12/easycnn-design-history/</loc>
+    
+    <lastmod>2019-09-23T07:01:34.166Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://hongbomin.com/2017/04/19/crash-when-python-call-cpp/</loc>
     
     <lastmod>2019-09-23T07:01:34.160Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://hongbomin.com/2017/04/19/crash-when-python-call-cpp/</loc>
+    <loc>http://hongbomin.com/2017/12/06/dealing-with-complex-thing/</loc>
     
     <lastmod>2019-09-23T07:01:34.160Z</lastmod>
     
@@ -317,13 +324,6 @@
   </url>
   
   <url>
-    <loc>http://hongbomin.com/2016/05/13/arm_neon_introduction/</loc>
-    
-    <lastmod>2019-09-23T07:01:34.153Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://hongbomin.com/2016/05/13/arm_neon_instrinsic/</loc>
     
     <lastmod>2019-09-23T07:01:34.153Z</lastmod>
@@ -332,6 +332,13 @@
   
   <url>
     <loc>http://hongbomin.com/2017/06/23/beam-search/</loc>
+    
+    <lastmod>2019-09-23T07:01:34.153Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://hongbomin.com/2016/05/13/arm_neon_introduction/</loc>
     
     <lastmod>2019-09-23T07:01:34.153Z</lastmod>
     

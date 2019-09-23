@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="笔记,读书,">
+  <meta name="keywords" content="工具使用,">
 
 
 
@@ -81,18 +81,20 @@
 
 
 
-<meta name="description" content="2018年已经到来，拥有一个新的开始从一个新的头脑开始，武装自己头脑的最好方法之一就是阅读。从财经类的书开始，加深各方面的理解和修养。 之前在kindle上已经购买了一些，挑了本广为人知的《穷爸爸，富爸爸》，花了一晚上看完了。在这里写下自己的读后感（希望之后每一本值得回味和讨论的书都能写一篇读后感）。 这本书以2个爸爸的财务观点作为引子，专业而富有学识的大学老师是穷爸爸，高中尚且未毕业却很富有的是">
-<meta name="keywords" content="笔记,读书">
+<meta name="description" content="简介字体文件为.ttf或者.otf等。 在使用字体渲染某些字符时，有可能渲染出空白或者“口”字形，原因在于该字体文件中不包含该字符的字形。 分析可能的原因包括：  字符不在字体的cmap表中（cmap表是字体文件声明的支持字符表）； 字符不在字体的glyf表中（glyf表是字体文件中实际包含的字形，类似svg描述）； 未知原因，需要人工进行查看，有些字体比较坑，缺失的字体就随便填个glyf。  第">
+<meta name="keywords" content="工具使用">
 <meta property="og:type" content="article">
-<meta property="og:title" content="获取资产而不是负债 - 《穷爸爸，富爸爸》读后感">
-<meta property="og:url" content="http://hongbomin.com/2017/12/31/reading-notes-of-qiongbaba/index.html">
+<meta property="og:title" content="如何检测字体文件中是否包含某字符">
+<meta property="og:url" content="http://hongbomin.com/2019/09/23/detect-oov-in-font/index.html">
 <meta property="og:site_name" content="竹杖芒鞋轻胜马，一蓑烟雨任平生">
-<meta property="og:description" content="2018年已经到来，拥有一个新的开始从一个新的头脑开始，武装自己头脑的最好方法之一就是阅读。从财经类的书开始，加深各方面的理解和修养。 之前在kindle上已经购买了一些，挑了本广为人知的《穷爸爸，富爸爸》，花了一晚上看完了。在这里写下自己的读后感（希望之后每一本值得回味和讨论的书都能写一篇读后感）。 这本书以2个爸爸的财务观点作为引子，专业而富有学识的大学老师是穷爸爸，高中尚且未毕业却很富有的是">
+<meta property="og:description" content="简介字体文件为.ttf或者.otf等。 在使用字体渲染某些字符时，有可能渲染出空白或者“口”字形，原因在于该字体文件中不包含该字符的字形。 分析可能的原因包括：  字符不在字体的cmap表中（cmap表是字体文件声明的支持字符表）； 字符不在字体的glyf表中（glyf表是字体文件中实际包含的字形，类似svg描述）； 未知原因，需要人工进行查看，有些字体比较坑，缺失的字体就随便填个glyf。  第">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-09-23T07:01:34.203Z">
+<meta property="og:image" content="http://hongbomin.com/2019/09/23/detect-oov-in-font/detect-oov-in-font.png">
+<meta property="og:updated_time" content="2019-09-23T07:35:48.746Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="获取资产而不是负债 - 《穷爸爸，富爸爸》读后感">
-<meta name="twitter:description" content="2018年已经到来，拥有一个新的开始从一个新的头脑开始，武装自己头脑的最好方法之一就是阅读。从财经类的书开始，加深各方面的理解和修养。 之前在kindle上已经购买了一些，挑了本广为人知的《穷爸爸，富爸爸》，花了一晚上看完了。在这里写下自己的读后感（希望之后每一本值得回味和讨论的书都能写一篇读后感）。 这本书以2个爸爸的财务观点作为引子，专业而富有学识的大学老师是穷爸爸，高中尚且未毕业却很富有的是">
+<meta name="twitter:title" content="如何检测字体文件中是否包含某字符">
+<meta name="twitter:description" content="简介字体文件为.ttf或者.otf等。 在使用字体渲染某些字符时，有可能渲染出空白或者“口”字形，原因在于该字体文件中不包含该字符的字形。 分析可能的原因包括：  字符不在字体的cmap表中（cmap表是字体文件声明的支持字符表）； 字符不在字体的glyf表中（glyf表是字体文件中实际包含的字形，类似svg描述）； 未知原因，需要人工进行查看，有些字体比较坑，缺失的字体就随便填个glyf。  第">
+<meta name="twitter:image" content="http://hongbomin.com/2019/09/23/detect-oov-in-font/detect-oov-in-font.png">
 
 
 
@@ -122,13 +124,13 @@
 
 
 
-  <link rel="canonical" href="http://hongbomin.com/2017/12/31/reading-notes-of-qiongbaba/">
+  <link rel="canonical" href="http://hongbomin.com/2019/09/23/detect-oov-in-font/">
 
 
 
 
 
-  <title>获取资产而不是负债 - 《穷爸爸，富爸爸》读后感 | 竹杖芒鞋轻胜马，一蓑烟雨任平生</title>
+  <title>如何检测字体文件中是否包含某字符 | 竹杖芒鞋轻胜马，一蓑烟雨任平生</title>
   
 
 
@@ -275,7 +277,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://hongbomin.com/2017/12/31/reading-notes-of-qiongbaba/">
+    <link itemprop="mainEntityOfPage" href="http://hongbomin.com/2019/09/23/detect-oov-in-font/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="洪柏敏">
@@ -292,7 +294,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">获取资产而不是负债 - 《穷爸爸，富爸爸》读后感</h1>
+          <h1 class="post-title" itemprop="name headline">如何检测字体文件中是否包含某字符</h1>
         
 
         <div class="post-meta">
@@ -304,8 +306,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-31T18:09:00+08:00">
-                2017-12-31
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-23T21:19:03+08:00">
+                2019-09-23
               </time>
             
 
@@ -327,8 +329,8 @@
               
               
                 <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/读书笔记/" itemprop="url" rel="index">
-                    <span itemprop="name">读书笔记</span>
+                  <a href="/categories/工具使用/" itemprop="url" rel="index">
+                    <span itemprop="name">工具使用</span>
                   </a>
                 </span>
 
@@ -345,8 +347,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2017/12/31/reading-notes-of-qiongbaba/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count gitment-comments-count" data-xid="/2017/12/31/reading-notes-of-qiongbaba/" itemprop="commentsCount"></span>
+                <a href="/2019/09/23/detect-oov-in-font/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count gitment-comments-count" data-xid="/2019/09/23/detect-oov-in-font/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -354,7 +356,7 @@
 
           
           
-             <span id="/2017/12/31/reading-notes-of-qiongbaba/" class="leancloud_visitors" data-flag-title="获取资产而不是负债 - 《穷爸爸，富爸爸》读后感">
+             <span id="/2019/09/23/detect-oov-in-font/" class="leancloud_visitors" data-flag-title="如何检测字体文件中是否包含某字符">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -385,34 +387,26 @@
       
 
       
-        <p>2018年已经到来，拥有一个新的开始从一个新的头脑开始，武装自己头脑的最好方法之一就是阅读。从财经类的书开始，加深各方面的理解和修养。</p>
-<p>之前在kindle上已经购买了一些，挑了本广为人知的《穷爸爸，富爸爸》，花了一晚上看完了。在这里写下自己的读后感（希望之后每一本值得回味和讨论的书都能写一篇读后感）。</p>
-<p>这本书以2个爸爸的财务观点作为引子，专业而富有学识的大学老师是穷爸爸，高中尚且未毕业却很富有的是富爸爸。穷爸爸代表了普罗大众的通常观点，好好学习锻炼技能以进入好的单位和公司获得更高的薪酬待遇。而富爸爸则不同，他的观点认为中产阶级和穷人本质没有区别，都是出卖自己的劳动力以换取报酬（出一份力，赚一分钱），这种方式本质上在于对生存的恐惧和对物质的欲望，难以根解。</p>
-<p>“员工付出最大努力以免于被解雇，而雇主提供最低工资防止员工辞职。”</p>
-<p>书的内容基本上可以概括为几个观点：</p>
-<ul>
-<li>资产和负债需要区分，资产可以产生收入，复杂只会产生支出；</li>
-<li>持有资产越多，会越来越富，反之持有负债越多，会越来越穷；</li>
-<li>增加自己的持有资产，而不是埋头增加自己的专业技能；</li>
-<li>富人理解税收的原理并能合法避税，而穷人除了给老板打工之外还要给国家打工；</li>
-<li>富人善于梳理信息寻找投资渠道，并且愿意承担可以感知的风险；</li>
-<li>为综合能力而工作，而不只是为了钱而工作，提高财富管理的能力、人员管理的能力；</li>
-<li>客服恐惧、愤世嫉俗、懒惰和傲慢，拥有良好的习惯；</li>
-<li>为专业付费，时间很宝贵。</li>
-</ul>
-<p>一言以蔽之，获取更多资产减少负债是成为富人的一大途径。</p>
-<p>对于财富的看法，赞同作者所说的资产和负债的论点。所谓资产，就是能持续性产生被动收入的物资，比如股票，基金，房产（出租），软件（付费），版税，专利等。</p>
-<p>对于程序员来说，最具可操作性的是股票，基金，软件等，由于时间和专业性的问题，不适合选择短期变动较大的高风险项目（需要时刻盯着），更应该持有长期的可预期增值的股票或者债券，自己开发自己获得收益的软件以及付费知识产权也是不错的方向。</p>
-<ul>
-<li>长期股票和债权</li>
-<li>持续性收入的软件</li>
-<li>付费知识产权</li>
-<li>其他</li>
-</ul>
-<p>持有更多的资产，减少更多的负债。拓宽知识面和信息来源，谨慎的判断风险，抓住机会毫不犹豫的决策。仅仅是了解并不够，实际行动才是最关键的。</p>
-<p>这个世界本质上是理性的有序的（至少在人类所接触的范围内），包括经济、政治、关系在内的很多领域，冰冷的概率决定世界的走向。对于数字和对于统计概率的敏感性，决定了是否有更加丰富的结构化的信息，决定了决策的合理性。</p>
-<p>基于此，希望之后能改掉混沌的生活态度，能更加精准的记录时间和金钱明细，用于分析和反思。用了两个APP，随手记（金钱明细）和aTimeLogger（时间明细）。坚持吧！</p>
-<p>总体来说，这本书的启发意义大于操作实效，对于财商的启蒙比较合适。</p>
+        <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>字体文件为.ttf或者.otf等。</p>
+<p>在使用字体渲染某些字符时，有可能渲染出空白或者“口”字形，原因在于该字体文件中不包含该字符的字形。</p>
+<h3 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h3><p>可能的原因包括：</p>
+<ol>
+<li>字符不在字体的cmap表中（cmap表是字体文件声明的支持字符表）；</li>
+<li>字符不在字体的glyf表中（glyf表是字体文件中实际包含的字形，类似svg描述）；</li>
+<li>未知原因，需要人工进行查看，有些字体比较坑，缺失的字体就随便填个glyf。</li>
+</ol>
+<p>第一种原因的检测方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">from fontTools.ttLib import TTFont</span><br><span class="line"></span><br><span class="line">ch = &apos;你&apos;</span><br><span class="line"></span><br><span class="line">font_path = &apos;test.ttf&apos;</span><br><span class="line">font = TTFont(font_path)</span><br><span class="line"></span><br><span class="line">found = False</span><br><span class="line">for table in font[&apos;cmap&apos;].tables:</span><br><span class="line">    if ord(ch) in table.cmap.keys():</span><br><span class="line">        found = True</span><br><span class="line">        break</span><br></pre></td></tr></table></figure></p>
+<p>第二种原因的检测方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">from fontTools.ttLib import TTFont</span><br><span class="line"></span><br><span class="line">ch = &apos;你&apos;</span><br><span class="line"></span><br><span class="line">font_path = &apos;test.ttf&apos;</span><br><span class="line">font = TTFont(font_path)</span><br><span class="line">glyph_name = None</span><br><span class="line">for table in font[&apos;cmap&apos;].tables:</span><br><span class="line">    glyph_name = table.cmap.get(ord(ch))</span><br><span class="line">    if glyph_name is not None:</span><br><span class="line">        break</span><br><span class="line">if glyph_name is not None:</span><br><span class="line">    glyf = font[&apos;glyf&apos;]</span><br><span class="line">    found = glyf.has_key(glyph_name) and glyf[glyph_name].numberOfContours &gt; 0</span><br><span class="line">else:</span><br><span class="line">    found = False</span><br></pre></td></tr></table></figure></p>
+<p>安装<a href="https://github.com/fonttools/fonttools" target="_blank" rel="noopener">fonttools</a>后，将ttf转换为xml格式可以使用文本化的形式查看字体：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ttx test.ttf</span><br></pre></td></tr></table></figure></p>
+<p>查看后发现该字符没有字形数据：<br><img src="/2019/09/23/detect-oov-in-font/detect-oov-in-font.png" alt=""></p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ol>
+<li><a href="https://stackoverflow.com/questions/47948821/python-imagefont-and-imagedraw-check-font-for-character-support" target="_blank" rel="noopener">https://stackoverflow.com/questions/47948821/python-imagefont-and-imagedraw-check-font-for-character-support</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/54379490" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/54379490</a></li>
+<li><a href="https://github.com/fonttools/fonttools/blob/master/Lib/fontTools/ttLib/tables/_g_l_y_f.py" target="_blank" rel="noopener">https://github.com/fonttools/fonttools/blob/master/Lib/fontTools/ttLib/tables/_g_l_y_f.py</a></li>
+<li><a href="https://developer.apple.com/fonts/TrueType-Reference-Manual/RM06/Chap6glyf.html" target="_blank" rel="noopener">https://developer.apple.com/fonts/TrueType-Reference-Manual/RM06/Chap6glyf.html</a></li>
+<li><a href="https://github.com/fonttools/fonttools/blob/master/Lib/fontTools/ttLib/tables/_c_m_a_p.py" target="_blank" rel="noopener">https://github.com/fonttools/fonttools/blob/master/Lib/fontTools/ttLib/tables/_c_m_a_p.py</a></li>
+<li><a href="https://developer.apple.com/fonts/TrueType-Reference-Manual/RM06/Chap6cmap.html" target="_blank" rel="noopener">https://developer.apple.com/fonts/TrueType-Reference-Manual/RM06/Chap6cmap.html</a></li>
+</ol>
 
       
     </div>
@@ -438,9 +432,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/笔记/" rel="tag"># 笔记</a>
-          
-            <a href="/tags/读书/" rel="tag"># 读书</a>
+            <a href="/tags/工具使用/" rel="tag"># 工具使用</a>
           
         </div>
       
@@ -453,8 +445,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/12/23/tensorflow-multitask-multilabel/" rel="next" title="TensorFlow多任务多标签分类">
-                <i class="fa fa-chevron-left"></i> TensorFlow多任务多标签分类
+              <a href="/2019/09/23/how-to-optimize-ubuntu-ui/" rel="next" title="调试一个顺手的ubuntu">
+                <i class="fa fa-chevron-left"></i> 调试一个顺手的ubuntu
               </a>
             
           </div>
@@ -462,10 +454,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/12/31/plan-of-the-2017-to-2018/" rel="prev" title="2017年的过去，和2018年的将来">
-                2017年的过去，和2018年的将来 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -524,8 +512,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
             
@@ -614,6 +611,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#简介"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分析"><span class="nav-number">2.</span> <span class="nav-text">分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">3.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
