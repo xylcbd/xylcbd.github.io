@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha256-yIDrPSXHZdOZhAqiBP7CKzIwMQmRCJ8UeB8Jo17YC4o=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"hongbomin.com","root":"/","images":"/images","scheme":"Mist","darkmode":true,"version":"8.19.1","exturl":false,"sidebar":{"position":"left","display":"hide","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"fold":{"enable":true,"height":800},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="图像处理，是对图像进行分析、加工、和处理，使其满足视觉、心理以及其他要求的技术。图像处理是信号处理在图像域上的一个应用。 基本图像处理">
+<meta property="og:type" content="article">
+<meta property="og:title" content="我所理解的图像处理技术栈">
+<meta property="og:url" content="http://hongbomin.com/2017/03/19/image-process/">
+<meta property="og:site_name" content="竹杖芒鞋轻胜马，一蓑烟雨任平生">
+<meta property="og:description" content="图像处理，是对图像进行分析、加工、和处理，使其满足视觉、心理以及其他要求的技术。图像处理是信号处理在图像域上的一个应用。 基本图像处理">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://hongbomin.com/2017/03/19/image-process/RGB.png">
+<meta property="og:image" content="http://hongbomin.com/2017/03/19/image-process/YUV.png">
+<meta property="og:image" content="http://hongbomin.com/2017/03/19/image-process/CMYK.png">
+<meta property="og:image" content="http://hongbomin.com/2017/03/19/image-process/HSL&HSV.png">
+<meta property="og:image" content="http://hongbomin.com/2017/03/19/image-process/frequency_domain.png">
+<meta property="article:published_time" content="2017-03-19T13:19:03.000Z">
+<meta property="article:modified_time" content="2023-12-07T02:17:51.393Z">
+<meta property="article:author" content="bomin">
+<meta property="article:tag" content="图像识别">
+<meta property="article:tag" content="图像处理">
+<meta property="article:tag" content="计算机视觉">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://hongbomin.com/2017/03/19/image-process/RGB.png">
+
+
+<link rel="canonical" href="http://hongbomin.com/2017/03/19/image-process/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://hongbomin.com/2017/03/19/image-process/","path":"2017/03/19/image-process/","title":"我所理解的图像处理技术栈"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>我所理解的图像处理技术栈 | 竹杖芒鞋轻胜马，一蓑烟雨任平生</title>
+  
+
+  <script src="/js/third-party/analytics/baidu-analytics.js"></script>
+  <script async src="https://hm.baidu.com/hm.js?23a58b060800f89fe2c9907f73bc0fdf"></script>
+
+
+
+
+
+
+<link rel="dns-prefetch" href="my-vercel-xylcbds-projects.vercel.app">
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">竹杖芒鞋轻胜马，一蓑烟雨任平生</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">don't worry, be happy!</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86"><span class="nav-number">1.</span> <span class="nav-text">基本图像处理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%BE%E5%83%8F%E4%BA%A7%E7%94%9F"><span class="nav-number">1.1.</span> <span class="nav-text">图像产生</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%BE%E5%83%8F%E8%A1%A8%E7%A4%BA"><span class="nav-number">1.2.</span> <span class="nav-text">图像表示</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#RGB"><span class="nav-number">1.2.1.</span> <span class="nav-text">RGB</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#YUV-YCbCr"><span class="nav-number">1.2.2.</span> <span class="nav-text">YUV&#x2F;YCbCr</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CMY-CMYK"><span class="nav-number">1.2.3.</span> <span class="nav-text">CMY&#x2F;CMYK</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HSL-HSV"><span class="nav-number">1.2.4.</span> <span class="nav-text">HSL&#x2F;HSV</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96"><span class="nav-number">1.2.5.</span> <span class="nav-text">其他</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%BE%E5%83%8F%E5%8E%8B%E7%BC%A9"><span class="nav-number">1.3.</span> <span class="nav-text">图像压缩</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%BE%E5%83%8F%E5%8F%98%E6%8D%A2"><span class="nav-number">1.4.</span> <span class="nav-text">图像变换</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%97%E6%95%B0%E5%8F%98%E6%8D%A2"><span class="nav-number">1.4.1.</span> <span class="nav-text">算数变换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%BB%E8%BE%91%E5%8F%98%E6%8D%A2"><span class="nav-number">1.4.2.</span> <span class="nav-text">逻辑变换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%A0%E4%BD%95%E5%8F%98%E6%8D%A2"><span class="nav-number">1.4.3.</span> <span class="nav-text">几何变换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%9C%E8%89%B2%E5%A4%84%E7%90%86"><span class="nav-number">1.4.4.</span> <span class="nav-text">颜色处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%81%B0%E5%BA%A6%E5%8F%98%E6%8D%A2"><span class="nav-number">1.4.5.</span> <span class="nav-text">灰度变换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BD%A2%E6%80%81%E5%AD%A6%E5%A4%84%E7%90%86"><span class="nav-number">1.4.6.</span> <span class="nav-text">形态学处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A9%BA%E9%97%B4%E6%BB%A4%E6%B3%A2"><span class="nav-number">1.4.7.</span> <span class="nav-text">空间滤波</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%91%E7%8E%87%E5%9F%9F%E6%BB%A4%E6%B3%A2"><span class="nav-number">1.4.8.</span> <span class="nav-text">频率域滤波</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86%E8%BF%9B%E9%98%B6"><span class="nav-number">1.5.</span> <span class="nav-text">图像处理进阶</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%BE%E5%83%8F%E9%87%91%E5%AD%97%E5%A1%94"><span class="nav-number">1.5.1.</span> <span class="nav-text">图像金字塔</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9C%8D%E5%A4%AB%E6%9B%BC%E5%8F%98%E6%8D%A2"><span class="nav-number">1.5.2.</span> <span class="nav-text">霍夫曼变换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%A8%E5%B1%80%E7%89%B9%E5%BE%81"><span class="nav-number">1.5.3.</span> <span class="nav-text">全局特征</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B1%80%E9%83%A8%E7%89%B9%E5%BE%81"><span class="nav-number">1.5.4.</span> <span class="nav-text">局部特征</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86%E6%8A%80%E6%9C%AF%E7%9A%84%E5%BA%94%E7%94%A8"><span class="nav-number">1.6.</span> <span class="nav-text">图像处理技术的应用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%BE%E5%83%8F%E5%A2%9E%E5%BC%BA"><span class="nav-number">1.6.1.</span> <span class="nav-text">图像增强</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B"><span class="nav-number">1.6.2.</span> <span class="nav-text">目标检测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%AE%E6%A0%87%E8%AF%86%E5%88%AB"><span class="nav-number">1.6.3.</span> <span class="nav-text">目标识别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E5%8A%A8%E4%B8%8A%E5%A6%86"><span class="nav-number">1.6.4.</span> <span class="nav-text">自动上妆</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#etc"><span class="nav-number">1.6.5.</span> <span class="nav-text">etc.</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="bomin"
+      src="/favicon.ico">
+  <p class="site-author-name" itemprop="name">bomin</p>
+  <div class="site-description" itemprop="description">个人网站，学习思考总结</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">47</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">70</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/xylcbd" title="Github → https:&#x2F;&#x2F;github.com&#x2F;xylcbd" rel="noopener me" target="_blank">Github</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/xing-ye-luo-chen" title="知乎 → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;xing-ye-luo-chen" rel="noopener me" target="_blank">知乎</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://hongbomin.com/2017/03/19/image-process/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/favicon.ico">
+      <meta itemprop="name" content="bomin">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="竹杖芒鞋轻胜马，一蓑烟雨任平生">
+      <meta itemprop="description" content="个人网站，学习思考总结">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="我所理解的图像处理技术栈 | 竹杖芒鞋轻胜马，一蓑烟雨任平生">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          我所理解的图像处理技术栈
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2017-03-19 21:19:03" itemprop="dateCreated datePublished" datetime="2017-03-19T21:19:03+08:00">2017-03-19</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-12-07 10:17:51" itemprop="dateModified" datetime="2023-12-07T10:17:51+08:00">2023-12-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">图像处理</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/2017/03/19/image-process/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/2017/03/19/image-process/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>图像处理，是对图像进行分析、加工、和处理，使其满足视觉、心理以及其他要求的技术。图像处理是信号处理在图像域上的一个应用。</p>
+<h1 id="基本图像处理"><a href="#基本图像处理" class="headerlink" title="基本图像处理"></a>基本图像处理</h1><h2 id="图像产生"><a href="#图像产生" class="headerlink" title="图像产生"></a>图像产生</h2><p>这篇文章所讨论的图像为2D图像。目前图像主要有2类来源：</p>
+<ol>
+<li>摄像机等硬件设备收集自然场景中产生的信号（如光学信号，红外信号等）所形成的图像；</li>
+<li>由算法生成的图像，如图形学技术产生的游戏画面等，或者类似GAN（Generative Adversarial Networks）产生的图像。</li>
+</ol>
+<h2 id="图像表示"><a href="#图像表示" class="headerlink" title="图像表示"></a>图像表示</h2><p>图像进行数字存储和处理需要表示方式，目前多采用下列颜色空间进行表示。</p>
+<h3 id="RGB"><a href="#RGB" class="headerlink" title="RGB"></a>RGB</h3><p>最常用的图像表示是以RGB为颜色空间的图像表示。RGB分别表示Red、Green、Blue，以三原色作为颜色的基础。并且有时候会附加Alpha通道，表示透明程度。<br><img src="/2017/03/19/image-process/RGB.png"></p>
+<h3 id="YUV-YCbCr"><a href="#YUV-YCbCr" class="headerlink" title="YUV&#x2F;YCbCr"></a>YUV&#x2F;YCbCr</h3><p>视频领域最长使用的图像表示方法。Y、UV分别表示亮度和色度，色度和亮度分离主要是早期彩色电视用于兼容黑白电视。YUV空间又名YCbCr空间，Cb和Cr分别表示红蓝的色度。<br><img src="/2017/03/19/image-process/YUV.png"></p>
+<h3 id="CMY-CMYK"><a href="#CMY-CMYK" class="headerlink" title="CMY&#x2F;CMYK"></a>CMY&#x2F;CMYK</h3><p>CMY&#x2F;CMYK颜色空间通常用于印刷出版。CMYK分别表示Cyan（青）、Magenta（品红）、Yellow（黄色）、BlacK（黑色）。该颜色空间主要在于CMYK四种颜色在实际场景中属于“三原色”，能很方便的制取获得。<br><img src="/2017/03/19/image-process/CMYK.png"></p>
+<h3 id="HSL-HSV"><a href="#HSL-HSV" class="headerlink" title="HSL&#x2F;HSV"></a>HSL&#x2F;HSV</h3><p>HSL&#x2F;HSV在很多需要用户进行颜色调整的场景，如视频编辑软件、图像编辑软件等。H代表Hue（色相），S达标Saturation（饱和度），L代表Luminance（亮度），V代表Value（明度）。<br><img src="/2017/03/19/image-process/HSL&HSV.png"></p>
+<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><p>除了上述4种颜色空间之外，有时为了特殊用途，也有一些其他的颜色空间，更多见：<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/List_of_color_spaces_and_their_uses">List of Color Space And Their Uses</a></p>
+<h2 id="图像压缩"><a href="#图像压缩" class="headerlink" title="图像压缩"></a>图像压缩</h2><p>图像压缩是指将图像通过某种压缩算法进行压缩存储和传输。一般压缩算法分为有损和无损压缩，前者代表性算法是png，后者代表性算法是jpg。</p>
+<h2 id="图像变换"><a href="#图像变换" class="headerlink" title="图像变换"></a>图像变换</h2><p>图像操作包括一些基础的图像变换技术，如下。</p>
+<h3 id="算数变换"><a href="#算数变换" class="headerlink" title="算数变换"></a>算数变换</h3><p>图像的算数变换是指对图像作算数变换，包括：</p>
+<ol>
+<li>图像相加</li>
+<li>图像相减</li>
+</ol>
+<h3 id="逻辑变换"><a href="#逻辑变换" class="headerlink" title="逻辑变换"></a>逻辑变换</h3><p>图像的逻辑变换是指对图像作逻辑变换，包括：</p>
+<ol>
+<li>图像And操作</li>
+<li>图像Or操作</li>
+<li>图像Not操作</li>
+</ol>
+<h3 id="几何变换"><a href="#几何变换" class="headerlink" title="几何变换"></a>几何变换</h3><p>图像的几何变换是指对图像作几何操作，包括：</p>
+<ol>
+<li>平移<blockquote>
+<p>指对图像进行X&#x2F;Y方向的移动操作，一般移动后产生的空白填充为背景色。</p>
+</blockquote>
+</li>
+<li>翻转<blockquote>
+<p>翻转是指对图像进行水平或者竖直方向的镜像处理。</p>
+</blockquote>
+</li>
+<li>旋转<blockquote>
+<p>旋转是指对图像围绕某个中心点进行旋转操作，旋转之后图像宽高会产生变化，旋转后产生的空白一般填充为背景色，宽高变化主要有2种处理方式：裁剪、扩大。</p>
+</blockquote>
+</li>
+<li>缩放<blockquote>
+<p>顾名思义，对图像进行放大或者缩小处理。</p>
+</blockquote>
+</li>
+<li>透视<blockquote>
+<p>透视变换是指将图像投影到一个新的视平面，也称作投影映射。通常2D图像透视将会导致图像畸变，原始的长方形图像变换为不规则四边形，通过定位该不规则四边形的4个角点，可对图像进行透视纠正还原为原始图像。</p>
+</blockquote>
+</li>
+<li>图像拼接<blockquote>
+<p>图像拼接是指将若干幅图像进行拼接，形成一张大图所做的操作。</p>
+</blockquote>
+</li>
+<li>图像裁剪<blockquote>
+<p>图像裁剪是指分理出图像感兴趣区域（ROI）所做的操作。</p>
+</blockquote>
+</li>
+</ol>
+<h3 id="颜色处理"><a href="#颜色处理" class="headerlink" title="颜色处理"></a>颜色处理</h3><p>颜色处理是指处理图像的颜色，包括：</p>
+<ol>
+<li>颜色变换<blockquote>
+<p>颜色变换是指各个颜色空间的转换以及某颜色空间中单通道的抽取或者多通道的合并等。在OpenCV中，通常表示为：RGB2HSV、GRAY2RGB、RGBA2GRAY等，更多见：<a target="_blank" rel="noopener" href="http://docs.opencv.org/3.2.0/d7/d1b/group__imgproc__misc.html#ga4e0972be5de079fed4e3a10e24ef5ef0"></a>。<br>不同的颜色空间在不同的场景下会有不同的方便，如HSV空间进行颜色突出物体的提取比较好，因此在部分场景下需要先确定使用何种颜色空间。</p>
+</blockquote>
+</li>
+<li>亮度、色度调整<blockquote>
+<p>通过调整颜色空间中的通道数值，进而调整整个图像的颜色表现。</p>
+</blockquote>
+</li>
+</ol>
+<h3 id="灰度变换"><a href="#灰度变换" class="headerlink" title="灰度变换"></a>灰度变换</h3><p>灰度变换是指对图像单通道进行颜色上的处理，包括：</p>
+<ol>
+<li>反相<blockquote>
+<p>即对图像进行颜色的翻转，原先的白色变成黑色，黑色变成白色。</p>
+</blockquote>
+</li>
+<li>对数变换<blockquote>
+<p>d&#x3D;c * log(1+s)，对数变换是指原始像素灰度值做对数变换后乘以常数。对数变换使得图像能更好的显示灰度值较低的区域，一般傅里叶变换所产生的图像会做一下对数变换。</p>
+</blockquote>
+</li>
+<li>伽马变换<blockquote>
+<p>伽马变换主要用于图像的颜色校正，将太亮或者太暗的图像进行修正。</p>
+</blockquote>
+</li>
+<li>灰度拉伸<blockquote>
+<p>灰度拉伸是指改变图像的灰度范围，并对原始灰度映射到新的灰度范围。最简单是的线性拉伸，以及其他的非线性拉伸或者分段式拉伸等。</p>
+</blockquote>
+</li>
+<li>比特平面分层<blockquote>
+<p>比特平面分成是指将灰度值分为多个bit平面，各个bit平面可能表示图像的不同域。</p>
+</blockquote>
+</li>
+<li>灰度分层<blockquote>
+<p>灰度分层是指将图像某个灰度范围内的像素置为某确定灰度，使得该绘图范围的所有像素突出显示。</p>
+</blockquote>
+</li>
+<li>直方图均衡化 <blockquote>
+<p>直方图是图像各个灰阶的像素数目的直方图统计，直方图均衡化能很好地解决低对比度等问题。直方图均衡化分为全局直方图均衡化和局部直方图均衡化。</p>
+</blockquote>
+</li>
+</ol>
+<h3 id="形态学处理"><a href="#形态学处理" class="headerlink" title="形态学处理"></a>形态学处理</h3><p>图像形态学处理用于图像的结构提取，基本的运算包括：二值腐蚀和膨胀、二值开闭运算、骨架抽取、极限腐蚀、击中击不中变换、形态学梯度、Top-hat变换、颗粒分析、流域变换等（参考：<a target="_blank" rel="noopener" href="http://blog.csdn.net/poem_qianmo/article/details/23710721">【OpenCV入门教程之十】 形态学图像处理（一）：膨胀与腐蚀</a>。</p>
+<ol>
+<li>腐蚀<blockquote>
+<p>腐蚀操作是指在核（kernel）范围内，除非图像上所有点均为前景色，否则将核范围内所有像素置为背景色。一般用于图像的噪声消除等。</p>
+</blockquote>
+</li>
+<li>膨胀<blockquote>
+<p>膨胀操作是指在核（kernel）范围内，如若图像上有任意点为前景色，将核范围内所有像素置为前景色。一般用于图像的断裂连接等。</p>
+</blockquote>
+</li>
+<li>开运算<blockquote>
+<p>开运算是指先做腐蚀然后做膨胀。</p>
+</blockquote>
+</li>
+<li>闭运算<blockquote>
+<p>闭运算是指先做膨胀然后做腐蚀。</p>
+</blockquote>
+</li>
+<li>击中击不中<blockquote>
+<p>采用2个不相交的核，核1对原图做腐蚀操作，核2对核1腐蚀过后的图像的反相做腐蚀操作，最后的图像即为击中击不中的结果。</p>
+</blockquote>
+</li>
+<li>连通域提取<blockquote>
+<p>连通域提取是图像领域最基础通用的算法之一，主要用于目标分割。</p>
+</blockquote>
+</li>
+<li>细化<blockquote>
+<p>细化是指保留图像形状的基础上对图像进行细化的操作。</p>
+</blockquote>
+</li>
+<li>骨架提取<blockquote>
+<p>骨架提取是只保留图像的基础骨架。</p>
+</blockquote>
+</li>
+<li>粗化<blockquote>
+<p>粗化是指保留图像形状的基础上对图像进行粗化的操作。</p>
+</blockquote>
+</li>
+<li>空洞填充<blockquote>
+<p>孔洞填充是用前景色指填充所有图像中的孔洞。</p>
+</blockquote>
+</li>
+</ol>
+<h3 id="空间滤波"><a href="#空间滤波" class="headerlink" title="空间滤波"></a>空间滤波</h3><p>空间滤波是指采用某个核对图像作空间滤波操作，根据核的不同，也会产生不同的滤波效果。包括：</p>
+<ol>
+<li>平滑<blockquote>
+<p>平滑所采用的核包括中值、均值、高斯、双边以及其他变式核，主要是使得周围像素附加对中心像素产生影响，平滑掉突出像素。</p>
+</blockquote>
+</li>
+<li>锐化<blockquote>
+<p>锐化主要用于强化图像的边缘地区，图像像素变化产生的一阶微分会产生较粗的边缘线，因此一般采用二阶微分作为锐化模板，如拉普拉斯算子等。</p>
+</blockquote>
+</li>
+<li>边缘提取<blockquote>
+<p>边缘提取是指提取图像中边缘部分，主要有Canny算子等。</p>
+</blockquote>
+</li>
+</ol>
+<h3 id="频率域滤波"><a href="#频率域滤波" class="headerlink" title="频率域滤波"></a>频率域滤波</h3><p>频率域滤波不同于空间滤波，这种处理方式不是很直观，需要将图像转换为频率域的表示，然后在频率域进行滤波操作，最后还原为原始空域图像。在空间域中不好处理的图像，可能在频率域处理会比较方便。<br>频域的高频决定细节，低频决定总体表现。高通滤波有利于提取图像轮廓和边缘，低通滤波有利于平滑图像噪声。频域滤波还可以去除比较规律性的周期噪声。更多图像频域滤波见：<a target="_blank" rel="noopener" href="http://blog.csdn.net/on2way/article/details/46981825">图像频域滤波与傅里叶变换</a>。<br>频率域滤波主要依赖于傅里叶变换，傅里叶变换所产生的频谱图是观察频域的主要方式，频谱图对于图像的平移不敏感，随图像的旋转而旋转，频谱图的详细解释见：<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xh6300/p/5956503.html">图像的二维傅里叶变换频谱图特点研究</a>。<br><img src="/2017/03/19/image-process/frequency_domain.png"></p>
+<h2 id="图像处理进阶"><a href="#图像处理进阶" class="headerlink" title="图像处理进阶"></a>图像处理进阶</h2><p>图像处理进阶技术是指结合各基本处理技术进行综合，满足特定条件下的需求所产生的一些技术。</p>
+<h3 id="图像金字塔"><a href="#图像金字塔" class="headerlink" title="图像金字塔"></a>图像金字塔</h3><p>图像金字塔是一种以多尺度角度处理图像的技术，在关心整体图像不关心细节时可直接处理金字塔顶层图像，并且在很多方法中会融合不同尺度所产生的信息。</p>
+<h3 id="霍夫曼变换"><a href="#霍夫曼变换" class="headerlink" title="霍夫曼变换"></a>霍夫曼变换</h3><p>霍夫曼变换是一种转换视角进行问题分析的方法，在检测诸如直线和圆等规律性形状时，首先将特定形状参数化表示，然后根据图像中所有像素对参数的贡献估计适用的参数，进而估计出目标形状区域。</p>
+<h3 id="全局特征"><a href="#全局特征" class="headerlink" title="全局特征"></a>全局特征</h3><p>图像全局特征是描述图像的整体特点的特征，包括颜色直方图特征、纹理特征等。可用于图像匹配与图像分析。</p>
+<h3 id="局部特征"><a href="#局部特征" class="headerlink" title="局部特征"></a>局部特征</h3><p>图像局部特征是指描述图像局部特点的特征。其核心要素在于不变性和可区分性，不变性包括灰度不变性、尺度不变性、旋转不变性等，可区分性则是指特征很容易进行匹配，二者往往是负相关。<br>常见的图像局部特征包括：</p>
+<ol>
+<li>Harris角点<blockquote>
+<p>角点常用于图像匹配等场景，Harris角点检测方法是角点检测常用的一种方法。</p>
+</blockquote>
+</li>
+<li>SIFT特征<blockquote>
+<p>SIFT特征具有较好的尺度、平移、旋转、亮度不变性，缺点是速度较慢。</p>
+</blockquote>
+</li>
+<li>SURF特征<blockquote>
+<p>SURF特征较之SIFT特征，速度有一定提升。</p>
+</blockquote>
+</li>
+<li>ORB特征<blockquote>
+<p>ORB特征运行速度远快于SIFT和SURF特征。</p>
+</blockquote>
+</li>
+<li>HOG特征<blockquote>
+<p>方向梯度直方图（Histogram of Oriented Gradient, HOG）特征是一种在计算机视觉和图像处理中用来进行物体检测的特征描述子。它通过计算和统计图像局部区域的梯度方向直方图来构成特征。常用于行人检测。</p>
+</blockquote>
+</li>
+<li>LBP特征<blockquote>
+<p>LBP（Local Binary Pattern，局部二值模式）是一种用来描述图像局部纹理特征的算子；它具有旋转不变性和灰度不变性等显著的优点。LBP特征常用于人脸识别与表情识别。</p>
+</blockquote>
+</li>
+<li>haar特征<blockquote>
+<p>Haar-like特征最早是由Papageorgiou等应用于人脸表示，Viola和Jones在此基础上，使用3种类型4种形式的特征。haar特征结合adaboost常用于人脸检测。</p>
+</blockquote>
+</li>
+</ol>
+<h2 id="图像处理技术的应用"><a href="#图像处理技术的应用" class="headerlink" title="图像处理技术的应用"></a>图像处理技术的应用</h2><p>图像处理技术在实际场景中有非常多的应用，包括不限于如下：</p>
+<h3 id="图像增强"><a href="#图像增强" class="headerlink" title="图像增强"></a>图像增强</h3><h3 id="目标检测"><a href="#目标检测" class="headerlink" title="目标检测"></a>目标检测</h3><h3 id="目标识别"><a href="#目标识别" class="headerlink" title="目标识别"></a>目标识别</h3><h3 id="自动上妆"><a href="#自动上妆" class="headerlink" title="自动上妆"></a>自动上妆</h3><h3 id="etc"><a href="#etc" class="headerlink" title="etc."></a>etc.</h3><p>未完待续。-&gt; 图像识别。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%9B%BE%E5%83%8F%E8%AF%86%E5%88%AB/" rel="tag"># 图像识别</a>
+              <a href="/tags/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/" rel="tag"># 图像处理</a>
+              <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89/" rel="tag"># 计算机视觉</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2017/03/10/using-visual-studio-as-linux-develop-IDE/" rel="prev" title="使用Visual Studio 2017作为Linux C++开发工具">
+                  <i class="fa fa-angle-left"></i> 使用Visual Studio 2017作为Linux C++开发工具
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2017/04/19/crash-when-python-call-cpp/" rel="next" title="Python调用C++模块时发生crash">
+                  Python调用C++模块时发生crash <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">bomin</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/xylcbd" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-cn","enable":true,"serverURL":"my-vercel-xylcbds-projects.vercel.app","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":false,"placeholder":null,"avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":true,"comment_count":true,"requiredFields":[],"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","el":"#waline","comment":true,"path":"/2017/03/19/image-process/"}</script>
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
+
+</body>
+</html>

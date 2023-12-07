@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha256-yIDrPSXHZdOZhAqiBP7CKzIwMQmRCJ8UeB8Jo17YC4o=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"hongbomin.com","root":"/","images":"/images","scheme":"Mist","darkmode":true,"version":"8.19.1","exturl":false,"sidebar":{"position":"left","display":"hide","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"fold":{"enable":true,"height":800},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="EasyCNN介绍EasyCNN是一个练手之作，权当熟悉CNN（Convolutional Neural Network)。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="EasyCNN的设计实现">
+<meta property="og:url" content="http://hongbomin.com/2016/11/12/easycnn-design-history/">
+<meta property="og:site_name" content="竹杖芒鞋轻胜马，一蓑烟雨任平生">
+<meta property="og:description" content="EasyCNN介绍EasyCNN是一个练手之作，权当熟悉CNN（Convolutional Neural Network)。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2016-11-12T12:37:09.000Z">
+<meta property="article:modified_time" content="2023-12-07T02:17:51.355Z">
+<meta property="article:author" content="bomin">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="软件架构">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://hongbomin.com/2016/11/12/easycnn-design-history/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://hongbomin.com/2016/11/12/easycnn-design-history/","path":"2016/11/12/easycnn-design-history/","title":"EasyCNN的设计实现"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>EasyCNN的设计实现 | 竹杖芒鞋轻胜马，一蓑烟雨任平生</title>
+  
+
+  <script src="/js/third-party/analytics/baidu-analytics.js"></script>
+  <script async src="https://hm.baidu.com/hm.js?23a58b060800f89fe2c9907f73bc0fdf"></script>
+
+
+
+
+
+
+<link rel="dns-prefetch" href="my-vercel-xylcbds-projects.vercel.app">
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">竹杖芒鞋轻胜马，一蓑烟雨任平生</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">don't worry, be happy!</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#EasyCNN%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">EasyCNN介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#EasyCNN%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.</span> <span class="nav-text">EasyCNN实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#License"><span class="nav-number">2.1.</span> <span class="nav-text">License</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%AE%E5%BD%95"><span class="nav-number">2.2.</span> <span class="nav-text">目录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E6%A1%A3"><span class="nav-number">2.3.</span> <span class="nav-text">文档</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95"><span class="nav-number">2.4.</span> <span class="nav-text">测试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9E%B6%E6%9E%84"><span class="nav-number">2.5.</span> <span class="nav-text">架构</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%90%8E%E8%AE%B0"><span class="nav-number">3.</span> <span class="nav-text">后记</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="bomin"
+      src="/favicon.ico">
+  <p class="site-author-name" itemprop="name">bomin</p>
+  <div class="site-description" itemprop="description">个人网站，学习思考总结</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">47</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">70</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/xylcbd" title="Github → https:&#x2F;&#x2F;github.com&#x2F;xylcbd" rel="noopener me" target="_blank">Github</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/xing-ye-luo-chen" title="知乎 → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;xing-ye-luo-chen" rel="noopener me" target="_blank">知乎</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://hongbomin.com/2016/11/12/easycnn-design-history/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/favicon.ico">
+      <meta itemprop="name" content="bomin">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="竹杖芒鞋轻胜马，一蓑烟雨任平生">
+      <meta itemprop="description" content="个人网站，学习思考总结">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="EasyCNN的设计实现 | 竹杖芒鞋轻胜马，一蓑烟雨任平生">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          EasyCNN的设计实现
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2016-11-12 20:37:09" itemprop="dateCreated datePublished" datetime="2016-11-12T20:37:09+08:00">2016-11-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-12-07 10:17:51" itemprop="dateModified" datetime="2023-12-07T10:17:51+08:00">2023-12-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%BD%AF%E4%BB%B6%E6%9E%B6%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">软件架构</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%BD%AF%E4%BB%B6%E6%9E%B6%E6%9E%84/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">深度学习</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/2016/11/12/easycnn-design-history/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/2016/11/12/easycnn-design-history/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="EasyCNN介绍"><a href="#EasyCNN介绍" class="headerlink" title="EasyCNN介绍"></a>EasyCNN介绍</h1><p><a target="_blank" rel="noopener" href="https://github.com/xylcbd/EasyCNN">EasyCNN</a>是一个练手之作，权当熟悉CNN（<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Convolutional_neural_network">Convolutional Neural Network</a>)。  </p>
+<p>当然这个项目其实也可以用于实际业务场景，如果对性能要求不高的话:) 。  </p>
+<p>EasyCNN完全由跨平台c++11代码构成，目前可运行在windows和android系统下，linux的Makefile还没写，不过应该很容易port到其他平台。  </p>
+<p>EasyCNN提供了CNN的一些基本功能，包括：  </p>
+<ul>
+<li>基本层：data，convolution，pooling，full-connect,softmax</li>
+<li>激活函数：ReLU，Tanh，Sigmoid</li>
+<li>Loss函数：MSE，Cross Entropy</li>
+<li>优化方法：SGD</li>
+<li>训练、测试、保存、载入CNN模型</li>
+</ul>
+<p>非常的toy，:)，不过，对于理解CNN或者一些简单的应用场景，差不多是够了。</p>
+<p>未来可能会继续优化它，包括卷积的Winograd优化，使用成熟BLAS库，多线程优化等。</p>
+<h1 id="EasyCNN实现"><a href="#EasyCNN实现" class="headerlink" title="EasyCNN实现"></a>EasyCNN实现</h1><p>有云：麻雀虽小，五脏俱全。虽然是个小项目，但是它已经基本拥有了现代软件中该有的基本构件，下面逐条来说。</p>
+<h2 id="License"><a href="#License" class="headerlink" title="License"></a>License</h2><p>这里用的是听起来就很厉害的<a target="_blank" rel="noopener" href="http://www.wtfpl.net/">WTFPL</a>(Do What the Fuck You Want to Public License)，直译就是“你想干嘛就干嘛的许可证”。  </p>
+<p>商业项目就不说了，用不着License。开源项目基本都需要一个License，权责要清晰，不然别人还真不敢用（当然，国内另说，管你什么License拿过来就用）。主要的License可见<a target="_blank" rel="noopener" href="http://choosealicense.com/licenses/">此处</a>，包括：GPL&#x2F;LGPL、MIT、Apache、BSD等。  </p>
+<p>这里随便选了个WTFPL，hhhhha…</p>
+<h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><p>c&#x2F;c++项目的目录组织一般包括：  </p>
+<ul>
+<li>ReadMe：&#x2F;README.md，主要是项目的一些介绍</li>
+<li>License：&#x2F;WTFPL.LICENSE，许可证</li>
+<li>头文件：&#x2F;header&#x2F;EasyCNN，SDK发布时的头文件</li>
+<li>源文件：&#x2F;src，实现部分</li>
+<li>文档：&#x2F;doc，文档，这里文档还是比较少，基本都放在&#x2F;README.md中了</li>
+<li>构件脚本：&#x2F;jni、&#x2F;msvc，相关平台下的构件脚本</li>
+<li>例子：&#x2F;examples，示例程序</li>
+<li>资源：&#x2F;res，示例程序或者其他需要用到的资源文件</li>
+</ul>
+<p>基本看多了github就知道一个项目目录大概应该长什么样子了，依着具体项目需要增减目录。</p>
+<h2 id="文档"><a href="#文档" class="headerlink" title="文档"></a>文档</h2><p>文档由很多部分组成，一般包括：项目介绍、API文档、示例程序解释、设计实现文档等。 </p>
+<p>这里暂时只有项目介绍 :( 。</p>
+<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p>测试一般包含2部分：单元测试和功能测试。  </p>
+<p>这里只做了人肉功能测试，大家不要学我，有时间的话还是要写好单元测试。单元测试的好处多多：</p>
+<ul>
+<li><p>结构清晰</p>
+<blockquote>
+<p>结构不清晰的根本没法做单元测试hhhha…</p>
+</blockquote>
+</li>
+<li><p>重构方便</p>
+<blockquote>
+<p>有了单元测试，就可以放心大胆的做重构了，不用怕弄成一团麻遗漏什么方向的测试。</p>
+</blockquote>
+</li>
+</ul>
+<p>当然，单元测试也有个粒度问题。粒度太细，可能需要写很多单元测试代码，比较麻烦，而且重构的时候不少测试例程用不着了需要删掉；粒度太粗，单元测试不好写，容易遗漏。这个还是要自己把握一下。</p>
+<h2 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h2><p>咦，终于说回EasyCNN了。  </p>
+<p>EasyCNN是一个类caffe的第一代深度学习框架，即框架以层（Layer）作为基础组成部分，网络由层堆叠而成。至于第二代深度学习框架，其实已经不只是深度学习了，应该叫做数值计算框架，如tensorflow等，我也写过一个类似的小型的，以后有机会的话可以贴出来看看。  </p>
+<p>深度学习框架需要抽象出来的几个概念，在EasyCNN中分别有实现，下面细说。</p>
+<ul>
+<li><p>数据  </p>
+<blockquote>
+<p>数据包含2部分，一部分是输入数据（如图像数据）和回传梯度等，另一部分是网络参数等。<br>这里将这两部分数据分别抽象出数据结构（代码有精简）。<br>图像数据的抽象：DataBucket  </p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">namespace</span> EasyCNN</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">struct</span> <span class="title class_">DataSize</span></span><br><span class="line">	&#123;</span><br><span class="line">	<span class="keyword">public</span>:</span><br><span class="line">		<span class="type">size_t</span> number = <span class="number">0</span>;</span><br><span class="line">		<span class="type">size_t</span> channels = <span class="number">0</span>;</span><br><span class="line">		<span class="type">size_t</span> width = <span class="number">0</span>;</span><br><span class="line">		<span class="type">size_t</span> height = <span class="number">0</span>;</span><br><span class="line">	&#125;;</span><br><span class="line">	<span class="keyword">class</span> <span class="title class_">DataBucket</span></span><br><span class="line">	&#123;</span><br><span class="line">	<span class="keyword">public</span>:</span><br><span class="line">		DataSize size;</span><br><span class="line">		std::shared_ptr&lt;<span class="type">float</span>&gt; data;</span><br><span class="line">	&#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>网络参数的抽象：ParamBucket</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">namespace</span> EasyCNN</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">struct</span> <span class="title class_">ParamSize</span></span><br><span class="line">	&#123;</span><br><span class="line">	<span class="keyword">public</span>:</span><br><span class="line">		<span class="type">size_t</span> number = <span class="number">0</span>;</span><br><span class="line">		<span class="type">size_t</span> channels = <span class="number">0</span>;</span><br><span class="line">		<span class="type">size_t</span> width = <span class="number">0</span>;</span><br><span class="line">		<span class="type">size_t</span> height = <span class="number">0</span>;</span><br><span class="line">	&#125;;</span><br><span class="line">	<span class="keyword">class</span> <span class="title class_">ParamBucket</span></span><br><span class="line">	&#123;</span><br><span class="line">	<span class="keyword">public</span>:</span><br><span class="line">		ParamSize size;</span><br><span class="line">		std::shared_ptr&lt;<span class="type">float</span>&gt; data;</span><br><span class="line">	&#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>可以看出两者其实是一样的结构，主要是因为CNN网络中的卷积核也需要number&#x2F;channels&#x2F;width&#x2F;height等元信息，为了包容统一，所以ParamBucket和DataBucket差不多。在最新的一些框架中这些元信息已经被统一包含在Shape抽象结构中了，Shape一般是一个int数组。由层自己定义参数Shape和数据Shape，运行时层自己依据Shape取出处理，所谓如人饮水冷暖自知。</p>
+</blockquote>
+</li>
+<li><p>层（Layer）  </p>
+<blockquote>
+<p>层（Layer），第一代深度学习框架的基本概念之一。一般每个层包含forward和backward，分别对应前向和后向的数据流。<br>EasyCNN中模仿caffe，把激活函数也单独抽取出来作为层了。<br>EasyCNN中层的抽象是这样的：  </p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">namespace</span> EasyCNN</span><br><span class="line">&#123;</span><br><span class="line"><span class="meta">#<span class="keyword">define</span> DECLARE_LAYER_TYPE static const std::string layerType;</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> DEFINE_LAYER_TYPE(class_type,type_string) const std::string class_type::layerType = type_string;</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FRIEND_WITH_NETWORK friend class NetWork;</span></span><br><span class="line">	<span class="keyword">enum class</span> <span class="title class_">Phase</span></span><br><span class="line">	&#123;</span><br><span class="line">		Train,</span><br><span class="line">		Test</span><br><span class="line">	&#125;;</span><br><span class="line">	<span class="keyword">class</span> <span class="title class_">Layer</span></span><br><span class="line">	&#123;</span><br><span class="line">		FRIEND_WITH_NETWORK</span><br><span class="line">	<span class="keyword">protected</span>:</span><br><span class="line">		<span class="function"><span class="keyword">virtual</span> std::string <span class="title">getLayerType</span><span class="params">()</span> <span class="type">const</span> </span>= <span class="number">0</span>;</span><br><span class="line">		<span class="function"><span class="keyword">virtual</span> std::string <span class="title">serializeToString</span><span class="params">()</span> <span class="type">const</span></span>&#123; <span class="keyword">return</span> <span class="built_in">getLayerType</span>(); &#125;;</span><br><span class="line">		<span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">serializeFromString</span><span class="params">(<span class="type">const</span> std::string content)</span></span>&#123;<span class="comment">/*nop*/</span>&#125;;</span><br><span class="line">		<span class="comment">//phase</span></span><br><span class="line">		<span class="function"><span class="keyword">inline</span> <span class="type">void</span> <span class="title">setPhase</span><span class="params">(Phase phase)</span> </span>&#123; <span class="keyword">this</span>-&gt;phase = phase; &#125;</span><br><span class="line">		<span class="function"><span class="keyword">inline</span> Phase <span class="title">getPhase</span><span class="params">()</span> <span class="type">const</span></span>&#123; <span class="keyword">return</span> phase; &#125;</span><br><span class="line">		<span class="comment">//learning rate</span></span><br><span class="line">		<span class="function"><span class="keyword">inline</span> <span class="type">void</span> <span class="title">setLearningRate</span><span class="params">(<span class="type">const</span> <span class="type">float</span> learningRate)</span></span>&#123; <span class="keyword">this</span>-&gt;learningRate = learningRate; &#125;</span><br><span class="line">		<span class="function"><span class="keyword">inline</span> <span class="type">float</span> <span class="title">getLearningRate</span><span class="params">()</span> <span class="type">const</span></span>&#123; <span class="keyword">return</span> learningRate; &#125;</span><br><span class="line">		<span class="comment">//size</span></span><br><span class="line">		<span class="function"><span class="keyword">inline</span> <span class="type">void</span> <span class="title">setInputBucketSize</span><span class="params">(<span class="type">const</span> DataSize size)</span></span>&#123; inputSize = size; &#125;</span><br><span class="line">		<span class="function"><span class="keyword">inline</span> DataSize <span class="title">getInputBucketSize</span><span class="params">()</span> <span class="type">const</span></span>&#123; <span class="keyword">return</span> inputSize; &#125;</span><br><span class="line">		<span class="function"><span class="keyword">inline</span> <span class="type">void</span> <span class="title">setOutpuBuckerSize</span><span class="params">(<span class="type">const</span> DataSize size)</span></span>&#123; outputSize = size; &#125;</span><br><span class="line">		<span class="function"><span class="keyword">inline</span> DataSize <span class="title">getOutputBucketSize</span><span class="params">()</span> <span class="type">const</span></span>&#123; <span class="keyword">return</span> outputSize; &#125;</span><br><span class="line">		<span class="comment">//solve params</span></span><br><span class="line">		<span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">solveInnerParams</span><span class="params">()</span></span>&#123; outputSize = inputSize; &#125;</span><br><span class="line">		<span class="comment">//data flow		</span></span><br><span class="line">		<span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">forward</span><span class="params">(<span class="type">const</span> std::shared_ptr&lt;DataBucket&gt; prevDataBucket, std::shared_ptr&lt;DataBucket&gt; nextDataBucket)</span> </span>= <span class="number">0</span>;</span><br><span class="line">		<span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">backward</span><span class="params">(std::shared_ptr&lt;DataBucket&gt; prevDataBucket, <span class="type">const</span> std::shared_ptr&lt;DataBucket&gt; nextDataBucket, std::shared_ptr&lt;DataBucket&gt;&amp; nextDiffBucket)</span> </span>= <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">private</span>:</span><br><span class="line">		Phase phase = Phase::Train;</span><br><span class="line">		DataSize inputSize;</span><br><span class="line">		DataSize outputSize;</span><br><span class="line">		<span class="type">float</span> learningRate = <span class="number">0.1f</span>;</span><br><span class="line">	&#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>损失函数（Loss）  </p>
+<blockquote>
+<p> 损失函数，是CNN中反向传播的起始点，将CNN的残差往前传递。<br>EasyCNN目前包含MSE和Cross Entropy这2种损失函数，当然，也很容易添加其他Loss函数。<br>损失函数的抽象结构如下：  </p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">namespace</span> EasyCNN</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">class</span> <span class="title class_">LossFunctor</span></span><br><span class="line">	&#123;</span><br><span class="line">	<span class="keyword">public</span>:</span><br><span class="line">		<span class="function"><span class="keyword">virtual</span> <span class="type">float</span> <span class="title">getLoss</span><span class="params">(<span class="type">const</span> std::shared_ptr&lt;EasyCNN::DataBucket&gt; labelDataBucket,</span></span></span><br><span class="line"><span class="params"><span class="function">			<span class="type">const</span> std::shared_ptr&lt;EasyCNN::DataBucket&gt; outputDataBucket)</span> </span>= <span class="number">0</span>;</span><br><span class="line">		<span class="function"><span class="keyword">virtual</span> std::shared_ptr&lt;EasyCNN::DataBucket&gt; <span class="title">getDiff</span><span class="params">(<span class="type">const</span> std::shared_ptr&lt;EasyCNN::DataBucket&gt; labelDataBucket,</span></span></span><br><span class="line"><span class="params"><span class="function">			<span class="type">const</span> std::shared_ptr&lt;EasyCNN::DataBucket&gt; outputDataBucket)</span> </span>= <span class="number">0</span>;</span><br><span class="line">	&#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>优化方法（参数更新）  </p>
+<blockquote>
+<p>优化方法，EasyCNN这里偷了个懒，没有单独抽象出来。</p>
+</blockquote>
+</li>
+<li><p>核心运行时</p>
+<blockquote>
+<p>核心运行时一般包括：配置（config）、日志（log）、错误处理（except、assert等）、工具函数（性能检测、字符串处理等）、基础数据处理函数（gemm、convolution等）<br>EasyCNN也内置了一些基础运行时：</p>
+<ul>
+<li>配置： Configure.h</li>
+<li>日志：EasyLogger.h</li>
+<li>错误处理： EasyAssert.h</li>
+<li>工具函数：CommonTools.h</li>
+<li>基础数据处理函数：暂无</li>
+</ul>
+</blockquote>
+</li>
+<li><p>网络</p>
+<blockquote>
+<p>网络将层组织起来，并控制数据流的运转，是整个框架逻辑上最复杂的一部分。并且包括模型的存储加载等。<br>下面是EasyCNN的网络抽象：</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">namespace</span> EasyCNN</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">class</span> <span class="title class_">NetWork</span></span><br><span class="line">	&#123;</span><br><span class="line">	<span class="keyword">public</span>:</span><br><span class="line">		<span class="built_in">NetWork</span>();</span><br><span class="line">		<span class="keyword">virtual</span> ~<span class="built_in">NetWork</span>();</span><br><span class="line">	<span class="keyword">public</span>:</span><br><span class="line">		<span class="comment">//common</span></span><br><span class="line">		<span class="function"><span class="type">void</span> <span class="title">setPhase</span><span class="params">(Phase phase)</span></span>;</span><br><span class="line">		<span class="function">Phase <span class="title">getPhase</span><span class="params">()</span> <span class="type">const</span></span>;</span><br><span class="line">		<span class="comment">//test only!</span></span><br><span class="line">		<span class="function"><span class="type">bool</span> <span class="title">loadModel</span><span class="params">(<span class="type">const</span> std::string&amp; modelFile)</span></span>;</span><br><span class="line">		<span class="function">std::shared_ptr&lt;EasyCNN::DataBucket&gt; <span class="title">testBatch</span><span class="params">(<span class="type">const</span> std::shared_ptr&lt;DataBucket&gt; inputDataBucket)</span></span>;</span><br><span class="line">		<span class="comment">//train only!</span></span><br><span class="line">		<span class="function"><span class="type">void</span> <span class="title">setInputSize</span><span class="params">(<span class="type">const</span> DataSize size)</span></span>;</span><br><span class="line">		<span class="function"><span class="type">void</span> <span class="title">setLossFunctor</span><span class="params">(std::shared_ptr&lt;LossFunctor&gt; lossFunctor)</span></span>;</span><br><span class="line">		<span class="function"><span class="type">void</span> <span class="title">addayer</span><span class="params">(std::shared_ptr&lt;Layer&gt; layer)</span></span>;</span><br><span class="line">		<span class="function"><span class="type">float</span> <span class="title">trainBatch</span><span class="params">(<span class="type">const</span> std::shared_ptr&lt;DataBucket&gt; inputDataBucket,</span></span></span><br><span class="line"><span class="params"><span class="function">			<span class="type">const</span> std::shared_ptr&lt;DataBucket&gt; labelDataBucket, <span class="type">float</span> learningRate)</span></span>;</span><br><span class="line">		<span class="function"><span class="type">bool</span> <span class="title">saveModel</span><span class="params">(<span class="type">const</span> std::string&amp; modelFile)</span></span>;</span><br><span class="line">	<span class="keyword">private</span>:</span><br><span class="line">		<span class="comment">//common</span></span><br><span class="line">		<span class="function">std::shared_ptr&lt;EasyCNN::DataBucket&gt; <span class="title">forward</span><span class="params">(<span class="type">const</span> std::shared_ptr&lt;DataBucket&gt; inputDataBucket)</span></span>;</span><br><span class="line">		<span class="function"><span class="type">float</span> <span class="title">backward</span><span class="params">(<span class="type">const</span> std::shared_ptr&lt;DataBucket&gt; labelDataBucket, <span class="type">float</span> learningRate)</span></span>;</span><br><span class="line">		<span class="function">std::string <span class="title">serializeToString</span><span class="params">()</span> <span class="type">const</span></span>;</span><br><span class="line">		std::vector&lt;std::shared_ptr&lt;EasyCNN::Layer&gt;&gt; <span class="built_in">serializeFromString</span>(<span class="type">const</span> std::string content);</span><br><span class="line">		<span class="function">std::shared_ptr&lt;EasyCNN::Layer&gt; <span class="title">createLayerByType</span><span class="params">(<span class="type">const</span> std::string layerType)</span></span>;</span><br><span class="line">	<span class="keyword">private</span>:</span><br><span class="line">		Phase phase = Phase::Train;</span><br><span class="line">		std::vector&lt;std::shared_ptr&lt;Layer&gt;&gt; layers;</span><br><span class="line">		std::vector&lt;std::shared_ptr&lt;DataBucket&gt;&gt; dataBuckets;</span><br><span class="line">		std::shared_ptr&lt;LossFunctor&gt; lossFunctor;</span><br><span class="line">	&#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h1 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h1><p>EasyCNN是熟悉CNN的练手之作，不足之处非常明显，就不多说了。这里就大概以EasyCNN为例讲了讲现代软件设计的一个基本构型。  </p>
+<p>具体CNN的实现原理可结合其他文章和这个代码，边调试边理解。</p>
+<p>有什么疑惑请留言或者在<a target="_blank" rel="noopener" href="https://github.com/xylcbd/EasyCNN">github</a>上给我发<a target="_blank" rel="noopener" href="https://github.com/xylcbd/EasyCNN/issues">issue</a>。</p>
+<p>:)</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag"># 深度学习</a>
+              <a href="/tags/%E8%BD%AF%E4%BB%B6%E6%9E%B6%E6%9E%84/" rel="tag"># 软件架构</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2016/11/11/using-mendely-as-paper-manager/" rel="prev" title="应用Mendely作为文献管理工具">
+                  <i class="fa fa-angle-left"></i> 应用Mendely作为文献管理工具
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2016/11/17/the-best-2D-graphics-engine/" rel="next" title="开源2D图形引擎对比">
+                  开源2D图形引擎对比 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">bomin</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/xylcbd" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-cn","enable":true,"serverURL":"my-vercel-xylcbds-projects.vercel.app","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":false,"placeholder":null,"avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":true,"comment_count":true,"requiredFields":[],"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","el":"#waline","comment":true,"path":"/2016/11/12/easycnn-design-history/"}</script>
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
+
+</body>
+</html>

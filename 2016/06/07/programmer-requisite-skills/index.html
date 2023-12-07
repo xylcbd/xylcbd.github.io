@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha256-yIDrPSXHZdOZhAqiBP7CKzIwMQmRCJ8UeB8Jo17YC4o=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"hongbomin.com","root":"/","images":"/images","scheme":"Mist","darkmode":true,"version":"8.19.1","exturl":false,"sidebar":{"position":"left","display":"hide","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"fold":{"enable":true,"height":800},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="这是2014年中旬写的一篇文章，现在看看大约也是符合现在自己的技术观点，只是现在更加注重实效了。基本上是视野会越来越开阔，对大部分工程问题基本上心里有点谱。      趁着这几天无事，好好总结一下从事软件开发以来的一些想法，这篇blog尝试从我自身的一些经历来谈谈程序员应该具备哪些素质。如有不足之处，还请不吝赐教！下面，我将列出并展开所有我认为程序员必须具备的素质。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="随便扯扯，程序员应该具备哪些素质">
+<meta property="og:url" content="http://hongbomin.com/2016/06/07/programmer-requisite-skills/">
+<meta property="og:site_name" content="竹杖芒鞋轻胜马，一蓑烟雨任平生">
+<meta property="og:description" content="这是2014年中旬写的一篇文章，现在看看大约也是符合现在自己的技术观点，只是现在更加注重实效了。基本上是视野会越来越开阔，对大部分工程问题基本上心里有点谱。      趁着这几天无事，好好总结一下从事软件开发以来的一些想法，这篇blog尝试从我自身的一些经历来谈谈程序员应该具备哪些素质。如有不足之处，还请不吝赐教！下面，我将列出并展开所有我认为程序员必须具备的素质。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2016-06-07T13:26:21.000Z">
+<meta property="article:modified_time" content="2023-12-07T02:17:51.393Z">
+<meta property="article:author" content="bomin">
+<meta property="article:tag" content="技术">
+<meta property="article:tag" content="感想">
+<meta property="article:tag" content="程序员">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://hongbomin.com/2016/06/07/programmer-requisite-skills/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://hongbomin.com/2016/06/07/programmer-requisite-skills/","path":"2016/06/07/programmer-requisite-skills/","title":"随便扯扯，程序员应该具备哪些素质"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>随便扯扯，程序员应该具备哪些素质 | 竹杖芒鞋轻胜马，一蓑烟雨任平生</title>
+  
+
+  <script src="/js/third-party/analytics/baidu-analytics.js"></script>
+  <script async src="https://hm.baidu.com/hm.js?23a58b060800f89fe2c9907f73bc0fdf"></script>
+
+
+
+
+
+
+<link rel="dns-prefetch" href="my-vercel-xylcbds-projects.vercel.app">
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">竹杖芒鞋轻胜马，一蓑烟雨任平生</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">don't worry, be happy!</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="nav-number">1.</span> <span class="nav-text">基础知识</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">2.</span> <span class="nav-text">算法与数据结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%AA%E5%AD%A6%E8%83%BD%E5%8A%9B"><span class="nav-number">3.</span> <span class="nav-text">自学能力</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%A1%E6%81%AF%E6%90%9C%E9%9B%86%E4%B8%8E%E7%AD%9B%E9%80%89"><span class="nav-number">4.</span> <span class="nav-text">信息搜集与筛选</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93%E8%83%BD%E5%8A%9B"><span class="nav-number">5.</span> <span class="nav-text">总结能力</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9C%80%E6%B1%82%E5%88%86%E6%9E%90%E4%B8%8E%E6%96%87%E6%A1%A3%E7%BC%96%E5%86%99"><span class="nav-number">6.</span> <span class="nav-text">需求分析与文档编写</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9E%B6%E6%9E%84%E8%83%BD%E5%8A%9B"><span class="nav-number">7.</span> <span class="nav-text">架构能力</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E7%BC%96%E5%86%99"><span class="nav-number">8.</span> <span class="nav-text">代码编写</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Debug%E8%83%BD%E5%8A%9B"><span class="nav-number">9.</span> <span class="nav-text">Debug能力</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E9%98%85%E8%AF%BB%E8%83%BD%E5%8A%9B"><span class="nav-number">10.</span> <span class="nav-text">代码阅读能力</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%87%8D%E6%9E%84%E8%83%BD%E5%8A%9B"><span class="nav-number">11.</span> <span class="nav-text">重构能力</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%A5%E5%85%B7%E7%9A%84%E9%80%89%E6%8B%A9%E4%B8%8E%E7%A7%AF%E7%B4%AF"><span class="nav-number">12.</span> <span class="nav-text">工具的选择与积累</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%A2%E9%98%9F%E5%8D%8F%E4%BD%9C"><span class="nav-number">13.</span> <span class="nav-text">团队协作</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="bomin"
+      src="/favicon.ico">
+  <p class="site-author-name" itemprop="name">bomin</p>
+  <div class="site-description" itemprop="description">个人网站，学习思考总结</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">47</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">70</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/xylcbd" title="Github → https:&#x2F;&#x2F;github.com&#x2F;xylcbd" rel="noopener me" target="_blank">Github</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/xing-ye-luo-chen" title="知乎 → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;xing-ye-luo-chen" rel="noopener me" target="_blank">知乎</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://hongbomin.com/2016/06/07/programmer-requisite-skills/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/favicon.ico">
+      <meta itemprop="name" content="bomin">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="竹杖芒鞋轻胜马，一蓑烟雨任平生">
+      <meta itemprop="description" content="个人网站，学习思考总结">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="随便扯扯，程序员应该具备哪些素质 | 竹杖芒鞋轻胜马，一蓑烟雨任平生">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          随便扯扯，程序员应该具备哪些素质
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2016-06-07 21:26:21" itemprop="dateCreated datePublished" datetime="2016-06-07T21:26:21+08:00">2016-06-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-12-07 10:17:51" itemprop="dateModified" datetime="2023-12-07T10:17:51+08:00">2023-12-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%84%9F%E6%83%B3/" itemprop="url" rel="index"><span itemprop="name">感想</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/2016/06/07/programmer-requisite-skills/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/2016/06/07/programmer-requisite-skills/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><blockquote>
+<p>这是2014年中旬写的一篇文章，现在看看大约也是符合现在自己的技术观点，只是现在更加注重实效了。基本上是视野会越来越开阔，对大部分工程问题基本上心里有点谱。    </p>
+</blockquote>
+<p>趁着这几天无事，好好总结一下从事软件开发以来的一些想法，这篇blog尝试从我自身的一些经历来谈谈程序员应该具备哪些素质。如有不足之处，还请不吝赐教！<br>下面，我将列出并展开所有我认为程序员必须具备的素质。    </p>
+<h2 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h2><p>你也许是像我一样的自学者，没有数电&#x2F;模电，编译原理，操作系统原理，网络与数据库等方面的知识，但是对于这些你应该尝试去了解、理解。当初跨专业考研之时学习的操作系统&#x2F;网络&#x2F;数据结构&#x2F;数据库的知识于我现在的工作仍然有益，我有遇到过一些能力很强的人，他们做解决方案很强，但是debug能力说实话不大匹配其水平，原因就在于其不了解很多底层的原理。<br>对于C&#x2F;C++程序员而言，其底层是操作系统和编译器，所以需要了解操作系统原理，汇编，编译原理等。<br>对于java&#x2F;c#程序员而言，其底层是虚拟机和框架，也应该去尝试了解虚拟机的构成，GC原理等。<br>我在网上遇到很多c&#x2F;c++，java&#x2F;c#程序员，很多时候都发现前者更喜欢追根溯底，后者更在乎如何使用框架，无法评判那种态度更好，但是了解得更深入很显然是有好处的。  </p>
+<h2 id="算法与数据结构"><a href="#算法与数据结构" class="headerlink" title="算法与数据结构"></a>算法与数据结构</h2><p>推荐阅读《大话数据结构》,《算法导论》。<br>算法与数据结构怎么强调都不为过，虽然大部分程序员在工作中并不一定会用到很多高级算法，也并不会去参加ACM，但是理解常用算法应该是一种基本素质。<br>应该掌握的常用的数据结构：数组，单链表，栈，队列，二叉树。<br>应该掌握的常用的算法：顺序查找，二分查找；冒泡排序，选择排序，插入排序；深度优先算法，广度优先算法。<br>进阶数据结构：双链表，循环链表，双端队列，哈希表，跳表，大根&#x2F;小根堆，哈夫曼树，排序二叉树，平衡二叉树，红黑树，B树&#x2F;B+树，图，etc。<br>进阶算法：二叉排序树查找；快速排序，希尔排序，堆排序，归并排序，桶排序，基数排序；KMP字符串匹配算法 ，etc。  </p>
+<h2 id="自学能力"><a href="#自学能力" class="headerlink" title="自学能力"></a>自学能力</h2><p>自学能力对于程序员来说非常重要，因为IT这行更新的太快了，几年不学习很容易就会被时代抛弃，国内尘嚣其上的“30岁转行论”有这方面的原因。我不是科班毕业的，大学学的是水利，和程序员什么关系都没有，一直以来都是自学，我将结合我的经历谈谈自学。<br>首先需要学习的是编程语言。我接触的第一门语言是Visual Basic，大部分理工科应该都有这样的一门编程课，或是vb，或是c，也有的是c++。这种课程对于大部分不感兴趣的人来说都是一种折磨，不过我对这种计算机按照我的意图来执行非常感兴趣，所以这样的课程很对我的口味。在课余，我会去图书馆借一些vb的书来看看，偶尔也会跟着书上的代码对照着敲代码。后来觉得vb功能有限，且无法理解vb之下的秘密，所以转而自学java，这次是在网上找的马士兵老师的java视频教程，跟着学习了一段时间。因为我的笔记本性能不够，臃肿的JVM运行的非常慢，转而学习C++。现在我在学C++11。<br>其次要学的是框架，库，API等，这时候你可以尝试做一些有意思的程序出来，通过这些学习基本上可以胜任某些方面的工作。<br>再次要学的是某个具体的方向，比如web，图形，图像，搜索引擎，机器学习等等专业领域，这些知识的学习应该是在日常工作中不断积累的。<br>这段时间的自学告诉我，凡事只要去努力去学习，都会有成果，所有看起来高大上的东西理解之后会发现就那么回事。此外，比较广泛的阅读了许多书籍，对我现在的工作仍然有利，许多事情是你首先得了解你才会去应用，很多好东西在书上在网上，你知道了才会在某个未来的时刻用上，如果你不知道那你只能错失良方许久。<br>学习是持久的，在实际应用中仍然会碰到你不熟悉的特性，会碰到坑，这时候你需要的是信息搜集与筛选的能力！  </p>
+<h2 id="信息搜集与筛选"><a href="#信息搜集与筛选" class="headerlink" title="信息搜集与筛选"></a>信息搜集与筛选</h2><p>在实际编程中，肯定会碰到各种各样的问题，有些是常见的问题，有些是莫名其妙的问题。<br>我的建议是首先尝试自己解决，次之看官方文档和讨论区是否有解释，然后再去搜索引擎&#x2F;stackoverflow查找有没有相似问题的解决方案，最后再去社区（CSDN&#x2F;cnblogs&#x2F;oschina&#x2F;stackoverflow等）提问。<br>强烈建议分享自己的解决方案和思考！<br>作为一个互联网&#x2F;开源受益者，分享应该是一种基本美德，特别鄙视发布问题自己找到解决方案之后就结贴走人的程序员。<br>分享自己的解决方案与思考不仅仅是让像你一样的疑惑者受益，同时还是教学相长的一个过程，自己也会从中获益。<br>如何分享自己的思考，这时候你需要的是总结的能力！  </p>
+<h2 id="总结能力"><a href="#总结能力" class="headerlink" title="总结能力"></a>总结能力</h2><p>总结使人进步 ！ 在网上看到一个段子，分享一下：<br>-“你有几年的工作经验，怎么写的代码这么差劲？”<br>-“5年工作经验”<br>-“呵呵，是1年经验当5年用了吧。”<br>决定我们是1年经验当5年用还是真有5年经验，最重要的就是记得总结自己碰到的问题，自己的想法，前辈的教导！    </p>
+<h2 id="需求分析与文档编写"><a href="#需求分析与文档编写" class="headerlink" title="需求分析与文档编写"></a>需求分析与文档编写</h2><p>一个项目的流程大致为：需求分析 –&gt; 估计进度 –&gt; 设计架构 –&gt; 编码实现 –&gt; Debug –&gt; 测试 –&gt; Release 。其中coding,debug,test可能会反复迭代。<br>可以看出需求分析是决定项目的第一个关键部分，有些公司是由专门人员进行需求分析，但是作为程序员，应该要了解需求，确认需求。<br>文档包括很多方面，需求文档、设计文档、测试文档、使用文档、注释等，贯穿软件开发的所有流程。良好的文档不仅仅是对项目的负责，同时也会有利于项目的维护。<br>在项目注释中，强烈建议添加：TODO , FIXME , HACK , XXX 等标签以帮助实现逻辑。  </p>
+<h2 id="架构能力"><a href="#架构能力" class="headerlink" title="架构能力"></a>架构能力</h2><p>推荐《架构之美》<br>在我刚入职的时候，每当接到一个任务时，我都迫不及待的去在IDE中敲代码，这种渴望很强烈，很有成就感。但是一个前辈告诉我，你首先应该做的是架构设计，充分考虑所有可能的情况并记录下来之后再去coding，我记下来了但是在没有教训之前仍然没有很强烈的体悟，后来我便后悔了。在某个项目中，我很快的写出了原型，然后洋洋得意地在这个原型上像打补丁一样扩展各种功能，最后在新加的某个功能上栽了跟头，这个功能完全没办法凑进去 。所以，作为程序员，我们需要拟制住自己的编码冲动以及修改代码的冲动，先架构设计，然后再编码。<br>架构期应该给各个模块&#x2F;类之间涉及一套相对合理稳定的接口，实现是易变的，接口不应该频繁变化。<br>我认为开发任何一个模块，首先要做的是理解需求，然后做架构设计，再然后布置基础设施（包括log，复用的宏，工具代码等），接着进行编码实现。  </p>
+<h2 id="代码编写"><a href="#代码编写" class="headerlink" title="代码编写"></a>代码编写</h2><p>推荐阅读《编写可读代码的艺术》、《代码整洁之道》。<br>这个不用多说，没有代码就没有软件。想追求卓越，应该让我们的代码更优美，性能更好。<br>代码编写功底包括变量命名，函数拆分与提取，面向对象的特性应用，跨平台意识，多线程的同步，等。<br>这种能力是在日常coding中积累而来的，多做总结。  </p>
+<h2 id="Debug能力"><a href="#Debug能力" class="headerlink" title="Debug能力"></a>Debug能力</h2><p>推荐阅读《软件调试》、《格蠹汇编:软件调试案例集锦》。<br>没有不出现任何bug的一次性成型的代码，debug是经常会出现的场景。<br>debug应该尽量的少，同架构设计一样，碰到问题应该首先看代码，能直接找出来问题最好。如果看不出来，就需要专业的debug能力了。<br>bug的场景包括：逻辑错误，程序crash，内存泄露。<br>bug的范围包括：单模块，多模块；单线程，多线程；单进程，多进程；单机，联机。<br>bug的频率包括：100%出现，容易出现，很难出现。<br>可见debug的范围之广，bug总是如影随形。<br>很多时候我会抱怨，oh，见鬼了，这太莫名其妙了，在我机器上都不会出现，等等。我现在明白拿到反馈的bug我该怎么做了：首先闭嘴，然后重现问题，接着缩小问题范围，最后借助调试器或者log找出问题原因。  </p>
+<h2 id="代码阅读能力"><a href="#代码阅读能力" class="headerlink" title="代码阅读能力"></a>代码阅读能力</h2><p>说实话这一段我写的很伤感，因为要写“read the fucking source code”实在是太fucking了。<br>对于接手一个遗留项目，你需要的不仅仅是勇气，还有耐心。对于一个拿到的项目，首先要做的应该是先跑起来，作为用户去使用，了解它的功能；接着阅读设计文档，了解设计意图；再然后如果有版本控制历史的话，可以尝试从早期版本进行代码阅读；再然后是从main函数起大致走一下流程，了解关键route；再然后是对感兴趣部分进行单步深入；最后是通读代码，可以先将功能性代码比如log，hashtable等标记为已读，从头文件看代码间的联系，弄懂各个类&#x2F;函数的职责。<br>说实话，对于具有一定强迫症的同学来说，阅读其他人写的代码应该是挺痛苦的，这时候有时间的话不妨对这些代码按你的标准进行重构。  </p>
+<h2 id="重构能力"><a href="#重构能力" class="headerlink" title="重构能力"></a>重构能力</h2><p>推荐阅读《重构,改善既有的代码设计》。<br>不管是重构别人写的代码，还是重构自己写的代码，好像都不是什么令人愉快的体验。重构，不仅可以使得架构更加合理，而且使得程序更加健壮。<br>重构，按我的理解分为两种。<br>一种是自顶向底的重构，这需要对项目具有彻底的理解，才能高屋建瓴的对模块&#x2F;接口&#x2F;类&#x2F;函数进行重新划分，再将以前的代码逻辑填充到新的框架下。<br>另一种是自底向顶的重构，这种方式是对某些代码进行优化重构，并且保证不影响实现，在重构部分区域之后调整局部结构，最后达到整体重构。  </p>
+<h2 id="工具的选择与积累"><a href="#工具的选择与积累" class="headerlink" title="工具的选择与积累"></a>工具的选择与积累</h2><p>作为程序员，都应该有一套自己使用的得心应手的工具，这样会事半功倍。<br>这些工具包括：IDE，编辑器，辅助debug的工具，检测系统&#x2F;程序状态的工具，版本控制工具，文件比较工具，性能分析工具，make&#x2F;cmake等等。  </p>
+<h2 id="团队协作"><a href="#团队协作" class="headerlink" title="团队协作"></a>团队协作</h2><p>现代软件工程单打独斗基本上不大现实了，像传说中的汇编写wps的求伯君大牛那样独自搞wps的传说已经渐隐渐逝了。<br>团队协作包括沟通能力，接口协商，版本控制工具的使用等方面。容易出现的是相互推诿责任，对别人的请求不耐烦等，这于团队协作毫无益处。<br>高效的团队协作应该是模块间接口稳定，基础类库一致，框架代码共享，版本更新信息及时，沟通反应快速有效。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag"># 技术</a>
+              <a href="/tags/%E6%84%9F%E6%83%B3/" rel="tag"># 感想</a>
+              <a href="/tags/%E7%A8%8B%E5%BA%8F%E5%91%98/" rel="tag"># 程序员</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2016/06/04/coding-for-neon-part1-load-and-stores/" rel="prev" title="[翻译]NEON编程1-数据加载与存储">
+                  <i class="fa fa-angle-left"></i> [翻译]NEON编程1-数据加载与存储
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2016/06/07/cpp-code-gist/" rel="next" title="c++实用代码片段">
+                  c++实用代码片段 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">bomin</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/xylcbd" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-cn","enable":true,"serverURL":"my-vercel-xylcbds-projects.vercel.app","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":false,"placeholder":null,"avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":true,"comment_count":true,"requiredFields":[],"libUrl":"//unpkg.com/@waline/client@v2/dist/waline.js","el":"#waline","comment":true,"path":"/2016/06/07/programmer-requisite-skills/"}</script>
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
+
+</body>
+</html>
